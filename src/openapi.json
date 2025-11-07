@@ -1,0 +1,287 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Employee API",
+    "version": "1.0.0",
+    "description": "API for managing employees with PIX keys and crypto wallets"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/employees": {
+      "get": {
+        "summary": "List all employees",
+        "responses": {
+          "200": {
+            "description": "List of employees",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Employee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Employee created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Employee ID"
+        }
+      ],
+      "get": {
+        "summary": "Get employee by ID",
+        "responses": {
+          "200": {
+            "description": "Employee found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "employee not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update employee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Employee"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "employee not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete employee",
+        "responses": {
+          "204": {
+            "description": "Employee deleted successfully"
+          },
+          "404": {
+            "description": "Employee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "employee not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "uptime": {
+                      "type": "number",
+                      "example": 123.45
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "pixKey": {
+            "type": "string"
+          },
+          "wallet": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "network": {
+            "type": "string",
+            "default": "sepolia"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "name", "pixKey", "wallet", "network", "createdAt"]
+      },
+      "CreateEmployeeInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "pixKey": {
+            "type": "string"
+          },
+          "wallet": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "network": {
+            "type": "string",
+            "default": "sepolia"
+          }
+        },
+        "required": ["name", "pixKey", "wallet"]
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["errors"]
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "watch": ["employee.js", "openapi.json"],
-  "ext": "js,json",
+  "watch": ["src"],
+  "ext": "ts,json",
   "ignore": ["node_modules", "dist", "*.log"],
-  "exec": "node employee.js",
+  "exec": "ts-node ./src/server.ts",
   "delay": "250"
 }
