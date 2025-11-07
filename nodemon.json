@@ -1,6 +1,7 @@
 {
-  "watch": [".", "employee.js", "openapi.json"],
+  "watch": ["employee.js", "openapi.json"],
   "ext": "js,json",
-  "ignore": ["node_modules", "dist", "package-lock.json"],
-  "exec": "node employee.js"
+  "ignore": ["node_modules", "dist", "*.log"],
+  "exec": "node employee.js",
+  "delay": "250"
 }

@@ -48,6 +48,21 @@ npm start
 
 O servidor estará disponível em `http://localhost:3000`
 
+### Desenvolvimento (dicas)
+
+- O script `npm run dev` usa `nodemon` para reiniciar automaticamente quando `employee.js` ou `openapi.json` mudarem.
+- Para editar variáveis de ambiente, copie `.env.example` para `.env` e não comite o `.env`.
+- A documentação interativa (Swagger) fica disponível enquanto o servidor roda em:
+  - http://localhost:3000/docs
+
+Exemplo rápido:
+```bash
+copy .env.example .env
+npm install
+npm run dev
+# abra http://localhost:3000/docs no navegador
+```
+
 ## 🐳 Usando Docker
 
 1. Construa a imagem:
