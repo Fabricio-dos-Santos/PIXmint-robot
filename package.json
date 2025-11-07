@@ -12,5 +12,10 @@
   "engines": {
     "node": ">=16"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "swagger-ui-express": "^5.0.1"
+  }
 }

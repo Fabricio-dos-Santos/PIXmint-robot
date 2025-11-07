@@ -1,6 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
+const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const openapi = require('./openapi.json');
 
 // Carrega variáveis de ambiente de .env (se existir)
 dotenv.config();
@@ -95,3 +98,6 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// Serve Swagger UI at /docs
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapi));
