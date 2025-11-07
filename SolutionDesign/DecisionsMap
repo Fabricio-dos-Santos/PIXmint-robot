@@ -3,7 +3,7 @@
 Blockchain e RPC
 Comece em Testnet: Sepolia (Ethereum).
 RPC: Infura (evite RPC público para produção).
-Endereços e ABIs versionados no repo (por ambiente).
+Endereços e ABIs versionados no repo (por ambiente). 
 
 Stack recomendada Web3 no frontend
 wagmi + viem (moderno, tipado, simples) + RainbowKit (UX de carteira).
