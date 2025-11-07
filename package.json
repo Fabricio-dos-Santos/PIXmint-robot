@@ -2,10 +2,10 @@
   "name": "pixmint-robot",
   "version": "0.1.0",
   "description": "dApp onde você paga um PIX via QRCode e envia em sua própria StableCoin",
-  "main": "index.js",
+  "main": "employee.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node employee.js",
+    "dev": "nodemon employee.js",
     "test": "echo \"No tests\" && exit 0",
     "lint": "echo \"No lint configured\""
   },
