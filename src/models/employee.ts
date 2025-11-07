@@ -43,3 +43,8 @@ export const employeeModel = {
     return employees.delete(id);
   },
 };
+
+// Testing helper: clear in-memory store
+export function clearEmployees(): void {
+  employees.clear();
+}
