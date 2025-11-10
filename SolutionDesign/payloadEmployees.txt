@@ -26,6 +26,4 @@ payload apoio
     "updatedAt": "2025-11-07T21:02:46.437Z"
   }
 
-  pixmint_db_user/DK7kdS6mTSddbKjb
-
-  mongodb+srv://pixmint_db_user:DK7kdS6mTSddbKjb@cluster0.ihove8d.mongodb.net/
+  
