@@ -27,3 +27,5 @@ payload apoio
   }
 
   pixmint_db_user/DK7kdS6mTSddbKjb
+
+  mongodb+srv://pixmint_db_user:DK7kdS6mTSddbKjb@cluster0.ihove8d.mongodb.net/

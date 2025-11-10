@@ -5,14 +5,14 @@ export interface Employee {
   wallet: string;
   network: string;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
 }
 
 export interface CreateEmployeeInput {
   name: string;
   pixKey: string;
   wallet: string;
-  network?: string;
+  network: string;
 }
 
 export interface ValidationError {

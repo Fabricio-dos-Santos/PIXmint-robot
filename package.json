@@ -1,7 +1,7 @@
 {
   "name": "pixmint-robot",
   "version": "0.1.0",
-  "description": "dApp onde você paga um PIX via QRCode e envia em sua própria StableCoin",
+  "description": "dApp onde você paga seus funcionários fazendo um PIX, e o funcionario recebe na StableCoin de sua preferencia.",
   "main": "dist/employee.js",
   "scripts": {
     "build": "tsc",
