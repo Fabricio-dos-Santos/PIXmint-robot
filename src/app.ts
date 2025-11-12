@@ -1,6 +1,6 @@
 import express from 'express';
 import { swaggerConfig } from './config/swagger';
-import { corsMiddleware, errorHandler } from './middleware';
+import { corsMiddleware, errorHandler, rateLimitMiddleware } from './middleware';
 import { employeeRoutes } from './routes/employee';
 
 const app = express();
@@ -8,6 +8,8 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(corsMiddleware);
+// apply rate limiting globally (adjust position and scope if you want per-route rules)
+app.use(rateLimitMiddleware);
 
 // Swagger docs (mount before routes)
 app.use('/docs', swaggerConfig.serve, swaggerConfig.setup);

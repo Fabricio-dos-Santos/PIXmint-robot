@@ -7,6 +7,7 @@
     "build": "tsc",
     "start": "node dist/employee.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"node_modules\\.bin\\ts-node\" src/employee.ts",
+    "seed": "ts-node prisma/seed.ts",
     "test": "jest --passWithNoTests",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write 'src/**/*.{ts,json}'",
@@ -21,6 +22,7 @@
     "@prisma/client": "^6.19.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-rate-limit": "^6.11.2",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {

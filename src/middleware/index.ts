@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { NotFoundError } from '../errors/NotFoundError';
 import { ValidationError } from '../errors/ValidationError';
+import rateLimit from 'express-rate-limit';
+import { config } from '../config/env';
 
 export const corsMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,6 +14,16 @@ export const corsMiddleware = (req: Request, res: Response, next: NextFunction):
   }
   next();
 };
+
+export const rateLimitMiddleware = rateLimit({
+  windowMs: config.rateLimitWindowMs,
+  max: config.rateLimitMax,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (_req, res) => {
+    res.status(429).json({ error: 'too_many_requests' });
+  },
+});
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
   // Prefer structured logging in real projects; keep console for now

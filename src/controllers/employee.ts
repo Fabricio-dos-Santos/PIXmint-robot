@@ -5,8 +5,8 @@ import employeeService from '../services/employeeService';
 export const employeeController = {
   create: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const input: CreateEmployeeInput = req.body || {};
-      const employee = await employeeService.createEmployee(input);
+      // delegate input validation and normalization to the service layer
+      const employee = await employeeService.createEmployee(req.body as any);
       res.status(201).json(employee);
     } catch (err) {
       next(err);
@@ -33,8 +33,8 @@ export const employeeController = {
 
   update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const input: Partial<CreateEmployeeInput> = req.body || {};
-      const updated = await employeeService.updateEmployee(req.params.id, input);
+      // pass raw body to service which will validate/merge
+      const updated = await employeeService.updateEmployee(req.params.id, req.body as any);
       res.json(updated);
     } catch (err) {
       next(err);
