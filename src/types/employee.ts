@@ -1,9 +1,17 @@
+export type Network =
+  | 'sepolia'
+  | 'ethereum'
+  | 'polygon'
+  | 'arbitrum'
+  | 'bnb'
+  | 'base';
+
 export interface Employee {
   id: string;
   name: string;
   pixKey: string;
   wallet: string;
-  network: string;
+  network: Network;
   createdAt: string;
   updatedAt: string;
 }
@@ -12,7 +20,7 @@ export interface CreateEmployeeInput {
   name: string;
   pixKey: string;
   wallet: string;
-  network?: string;
+  network?: Network;
 }
 
 export interface ValidationError {

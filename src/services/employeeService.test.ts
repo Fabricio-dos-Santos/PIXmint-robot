@@ -19,7 +19,7 @@ describe('employeeService', () => {
 
   test('createEmployee - success', async () => {
     const input = { name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'a'.repeat(40) };
-    const created = { id: '1', ...input, network: 'eth', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  const created = { id: '1', ...input, network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     employeeModel.create.mockResolvedValue(created);
 
     const res = await employeeService.createEmployee(input);
@@ -40,14 +40,14 @@ describe('employeeService', () => {
   });
 
   test('listEmployees - returns array', async () => {
-    const list = [{ id: '1', name: 'A', pixKey: 'p', wallet: '0x' + 'b'.repeat(40), network: 'eth', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }];
+  const list = [{ id: '1', name: 'A', pixKey: 'p', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }];
     employeeModel.findAll.mockResolvedValue(list);
     const res = await employeeService.listEmployees();
     expect(res).toEqual(list);
   });
 
   test('updateEmployee - success', async () => {
-  const existing = { id: '1', name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'b'.repeat(40), network: 'eth', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  const existing = { id: '1', name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     employeeModel.findById.mockResolvedValue(existing);
   const updated = { ...existing, name: 'Bob' };
   employeeModel.update.mockResolvedValue(updated);

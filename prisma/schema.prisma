@@ -15,7 +15,16 @@ model Employee {
   name      String
   pixKey    String
   wallet    String
-  network   String   @default("sepolia")
+  network   Network  @default(sepolia)
   createdAt DateTime @default(now())
   updatedAt DateTime?
+}
+
+enum Network {
+  sepolia
+  ethereum
+  polygon
+  arbitrum
+  bnb
+  base
 }

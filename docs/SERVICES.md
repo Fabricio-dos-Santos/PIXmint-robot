@@ -10,6 +10,12 @@ This document explains the small services layer added to the project and how to 
 ## Current implementation
 
 - `src/services/employeeService.ts` - handles employee creation, listing, retrieval, update and deletion. It uses `employeeModel` for persistence and throws domain errors (`NotFoundError`, `ValidationError`) when appropriate.
+ - `src/services/employeeService.ts` - handles employee creation, listing, retrieval, update and deletion. It uses `employeeModel` for persistence and throws domain errors (`NotFoundError`, `ValidationError`) when appropriate.
+
+Note on `network` field:
+
+- The `network` field is now an enum of common EVM-compatible networks. The allowed values are: `sepolia`, `ethereum`, `polygon`, `arbitrum`, `bnb`, `base`.
+- The database default remains `sepolia`. The API will reject empty or invalid `network` values. If `network` is omitted in the request, the DB default (`sepolia`) will apply.
 
 ## Contracts
 

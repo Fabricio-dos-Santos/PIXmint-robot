@@ -236,7 +236,8 @@
           },
           "network": {
             "type": "string",
-            "default": "sepolia"
+            "default": "sepolia",
+            "enum": ["sepolia","ethereum","polygon","arbitrum","bnb","base"]
           },
           "createdAt": {
             "type": "string",
@@ -265,7 +266,8 @@
           },
           "network": {
             "type": "string",
-            "default": "sepolia"
+            "default": "sepolia",
+            "enum": ["sepolia","ethereum","polygon","arbitrum","bnb","base"]
           }
         },
         "required": ["name", "pixKey", "wallet"]

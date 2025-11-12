@@ -6,19 +6,30 @@ describe('employeeModel', () => {
   });
 
   it('creates and retrieves employees', async () => {
-    const input = {
-      name: 'Test User',
-      pixKey: 'test@pix.com',
-      wallet: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
-    };
+    // seed mass data: create 6 employees with different networks
+    const seed = [
+      { name: 'User A', pixKey: 'a@pix', wallet: '0x' + '1'.repeat(40), network: 'sepolia' },
+      { name: 'User B', pixKey: 'b@pix', wallet: '0x' + '2'.repeat(40), network: 'ethereum' },
+      { name: 'User C', pixKey: 'c@pix', wallet: '0x' + '3'.repeat(40), network: 'polygon' },
+      { name: 'User D', pixKey: 'd@pix', wallet: '0x' + '4'.repeat(40), network: 'arbitrum' },
+      { name: 'User E', pixKey: 'e@pix', wallet: '0x' + '5'.repeat(40), network: 'bnb' },
+      { name: 'User F', pixKey: 'f@pix', wallet: '0x' + '6'.repeat(40), network: 'base' },
+    ];
 
-    const created = await employeeModel.create(input);
-    expect(created).toHaveProperty('id');
-    expect(created.name).toBe('Test User');
+    const created = [] as any[];
+    for (const s of seed) {
+      // create should accept network (or fallback to default)
+      const c = await employeeModel.create(s as any);
+      created.push(c);
+      expect(c).toHaveProperty('id');
+    }
 
     const all = await employeeModel.findAll();
-    const found = all.find(e => e.id === created.id);
-    expect(found).toBeDefined();
-    expect(found!.pixKey).toBe('test@pix.com');
+    // ensure seeded employees are present
+    for (const c of created) {
+      const found = all.find(e => e.id === c.id);
+      expect(found).toBeDefined();
+      expect(found!.network).toBe(c.network);
+    }
   });
 });
