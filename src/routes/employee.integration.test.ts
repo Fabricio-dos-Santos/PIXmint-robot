@@ -3,8 +3,8 @@ import app from '../app';
 import { clearEmployees } from '../models/employee';
 
 describe('employee routes (integration)', () => {
-  beforeEach(() => {
-    clearEmployees();
+  beforeEach(async () => {
+    await clearEmployees();
   });
 
   it('should create an employee and list it', async () => {

@@ -6,6 +6,8 @@ npm-debug.log*
 coverage/
 dist/
 .build/
+prisma/dev.db
+*.db
 
 # IDEs
 .vscode/

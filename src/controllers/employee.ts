@@ -1,63 +1,52 @@
-import { Request, Response } from 'express';
-import { Employee, CreateEmployeeInput } from '../types/employee';
-import { employeeModel } from '../models/employee';
-import { validateEmployeeInput } from '../utils/validation';
+import { Request, Response, NextFunction } from 'express';
+import { CreateEmployeeInput } from '../types/employee';
+import employeeService from '../services/employeeService';
 
 export const employeeController = {
-  create: (req: Request, res: Response): void => {
-    const input: CreateEmployeeInput = req.body || {};
-    const errors = validateEmployeeInput(input);
-    if (errors.length) {
-      res.status(400).json({ errors });
-      return;
+  create: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const input: CreateEmployeeInput = req.body || {};
+      const employee = await employeeService.createEmployee(input);
+      res.status(201).json(employee);
+    } catch (err) {
+      next(err);
     }
-
-    const employee = employeeModel.create(input);
-    res.status(201).json(employee);
   },
 
-  list: (_req: Request, res: Response): void => {
-    const employees = employeeModel.findAll();
-    res.json(employees);
+  list: async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employees = await employeeService.listEmployees();
+      res.json(employees);
+    } catch (err) {
+      next(err);
+    }
   },
 
-  get: (req: Request, res: Response): void => {
-    const employee = employeeModel.findById(req.params.id);
-    if (!employee) {
-      res.status(404).json({ error: 'employee not found' });
-      return;
+  get: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const employee = await employeeService.getEmployee(req.params.id);
+      res.json(employee);
+    } catch (err) {
+      next(err);
     }
-    res.json(employee);
   },
 
-  update: (req: Request, res: Response): void => {
-    const existing = employeeModel.findById(req.params.id);
-    if (!existing) {
-      res.status(404).json({ error: 'employee not found' });
-      return;
+  update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const input: Partial<CreateEmployeeInput> = req.body || {};
+      const updated = await employeeService.updateEmployee(req.params.id, input);
+      res.json(updated);
+    } catch (err) {
+      next(err);
     }
-
-    const input: Partial<CreateEmployeeInput> = req.body || {};
-    const errors = validateEmployeeInput({
-      name: input.name ?? existing.name,
-      pixKey: input.pixKey ?? existing.pixKey,
-      wallet: input.wallet ?? existing.wallet,
-    });
-    if (errors.length) {
-      res.status(400).json({ errors });
-      return;
-    }
-
-    const updated = employeeModel.update(req.params.id, input);
-    res.json(updated);
   },
 
-  delete: (req: Request, res: Response): void => {
-    const existed = employeeModel.delete(req.params.id);
-    if (!existed) {
-      res.status(404).json({ error: 'employee not found' });
-      return;
+  delete: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      await employeeService.deleteEmployee(req.params.id);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
     }
-    res.status(204).send();
   },
 };

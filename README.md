@@ -48,9 +48,9 @@ npm start
 
 O servidor estará disponível em `http://localhost:3000`
 
-### Desenvolvimento (dicas)
+-### Desenvolvimento (dicas)
 
-- O script `npm run dev` usa `nodemon` para reiniciar automaticamente quando `employee.js` ou `openapi.json` mudarem.
+- O script `npm run dev` usa `nodemon`/`ts-node` para reiniciar automaticamente quando arquivos em `src/` ou `openapi.json` mudarem.
 - Para editar variáveis de ambiente, copie `.env.example` para `.env` e não comite o `.env`.
 - A documentação interativa (Swagger) fica disponível enquanto o servidor roda em:
   - http://localhost:3000/docs

@@ -1,0 +1,21 @@
+// Prisma schema - using SQLite for local development.
+// To switch to MongoDB Atlas, change provider = "mongodb" and set the MONGODB_URI in .env.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id        String   @id @default(uuid())
+  name      String
+  pixKey    String
+  wallet    String
+  network   String   @default("sepolia")
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+}

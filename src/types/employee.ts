@@ -12,7 +12,7 @@ export interface CreateEmployeeInput {
   name: string;
   pixKey: string;
   wallet: string;
-  network: string;
+  network?: string;
 }
 
 export interface ValidationError {
