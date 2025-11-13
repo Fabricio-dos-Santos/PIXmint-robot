@@ -12,7 +12,7 @@ type Employee = {
 };
 
 // --- PIX key helpers: detect type, format and validate ---
-const isEmail = (val?: string) => !!val && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+const isEmail = (val?: string) => !!val && /^[^\s@]+@[^\s@]+\.(com|com\.br)$/i.test(val);
 
 const onlyDigits = (s = '') => s.replace(/\D/g, '');
 
@@ -57,12 +57,10 @@ const formatCPF = (val = '') => {
   return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
 };
 
-const isHexWallet = (val?: string) => !!val && /^0x[0-9a-fA-F]{40}$/.test(val);
-
 const isRandom = (val?: string) => {
   if (!val) return false;
-  // treat as random when it's not email/phone/cpf and not a hex wallet
-  return !isEmail(val) && !isPhone(val) && !isCPF(val) && !isHexWallet(val);
+  // treat as random when it's not email/phone/cpf
+  return !isEmail(val) && !isPhone(val) && !isCPF(val);
 };
 
 const renderPixKey = (val?: string) => {
@@ -91,14 +89,7 @@ const renderPixKey = (val?: string) => {
     </span>
   );
 
-  if (isHexWallet(val)) return (
-    <span title={val}>
-      {val}
-      <span style={{ ...styleBadge, background: '#f0f7ff', color: '#0a317b' }}>wallet</span>
-    </span>
-  );
-
-  // random/other
+  // random/other (includes wallet-like values)
   return (
     <span title={val}>
       {val}
@@ -112,6 +103,16 @@ const maskEmail = (val: string) => {
   const [local, domain] = val.split('@');
   if (!domain) return val;
   const visible = local.length <= 2 ? local : local.slice(0, 2);
+  return `${visible}${'*'.repeat(Math.max(0, Math.min(6, local.length - visible.length)))}@${domain}`;
+};
+
+// Safe mask for possibly-invalid emails (keeps something readable even without domain)
+const maskPossiblyInvalidEmail = (val: string) => {
+  const parts = val.split('@');
+  const local = parts[0] || '';
+  const domain = parts[1] || '';
+  const visible = local.length <= 2 ? local : local.slice(0, 2);
+  if (!domain) return `${visible}${'*'.repeat(Math.max(0, Math.min(6, local.length - visible.length)))}`;
   return `${visible}${'*'.repeat(Math.max(0, Math.min(6, local.length - visible.length)))}@${domain}`;
 };
 
@@ -138,12 +139,7 @@ const maskCPF = (val: string) => {
   return `***.***.${last3.slice(0,3)}-${d.slice(9)}`;
 };
 
-const maskWallet = (val: string) => {
-  if (!isHexWallet(val)) return val;
-  const head = val.slice(0, 6);
-  const tail = val.slice(-4);
-  return `${head}...${tail}`;
-};
+// (no wallet-type masks; wallets are treated as random pix keys)
 
 const maskRandom = (val: string) => {
   if (val.length <= 8) return `${val.slice(0, 2)}...${val.slice(-2)}`;
@@ -156,7 +152,6 @@ const renderPixKeyMasked = (val?: string) => {
   if (isEmail(val)) return <span title={val}>{maskEmail(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#2b6cb0' }}>email</span></span>;
   if (isPhone(val)) return <span title={val}>{maskPhone(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#2f855a' }}>telefone</span></span>;
   if (isCPF(val)) return <span title={val}>{maskCPF(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#b58900' }}>CPF</span></span>;
-  if (isHexWallet(val)) return <span title={val}>{maskWallet(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#0a317b' }}>wallet</span></span>;
   return <span title={val}>{maskRandom(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#9b2c2c' }}>random</span></span>;
 };
 
@@ -211,15 +206,17 @@ const renderPixKeyWithCopy = (val?: string) => {
   let label = '';
   let masked = '';
   if (isEmail(val)) { label = 'email'; masked = maskEmail(val); }
+  else if (val.includes('@')) { label = 'email inválido'; masked = maskPossiblyInvalidEmail(val); }
   else if (isPhone(val)) { label = 'telefone'; masked = maskPhone(val); }
   else if (isCPF(val)) { label = 'CPF'; masked = maskCPF(val); }
-  else if (isHexWallet(val)) { label = 'wallet'; masked = maskWallet(val); }
   else { label = 'random'; masked = maskRandom(val); }
+
+  const labelColor = label === 'email' ? '#2b6cb0' : label === 'telefone' ? '#2f855a' : label === 'CPF' ? '#b58900' : label === 'email inválido' ? '#e53e3e' : '#9b2c2c';
 
   return (
     <div style={{ display: 'flex', alignItems: 'center' }} title={val}>
       <span style={{ maxWidth: 420, display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{masked}</span>
-      <span style={{ marginLeft: 8, fontSize: 12, color: label === 'email' ? '#2b6cb0' : label === 'telefone' ? '#2f855a' : label === 'CPF' ? '#b58900' : label === 'wallet' ? '#0a317b' : '#9b2c2c' }}>{label}</span>
+      <span style={{ marginLeft: 8, fontSize: 12, color: labelColor }}>{label}</span>
       <CopyButton text={val} />
     </div>
   );
