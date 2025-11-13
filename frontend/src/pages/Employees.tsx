@@ -35,20 +35,11 @@ const formatPhone = (val = '') => {
   return val;
 };
 
-// Basic CPF validation (checks length and verification digits)
+// Basic CPF validation (only check length of digits: 11)
 const isCPF = (val?: string) => {
   if (!val) return false;
-  const cpf = onlyDigits(val).padStart(11, '0');
-  if (cpf.length !== 11 || /^([0-9])\1{10}$/.test(cpf)) return false;
-
-  const calc = (t: number) => {
-    let sum = 0;
-    for (let i = 0; i < t - 1; i++) sum += parseInt(cpf.charAt(i)) * (t - i);
-    const r = (sum * 10) % 11;
-    return r === 10 ? 0 : r;
-  };
-
-  return calc(10) === parseInt(cpf.charAt(9)) && calc(11) === parseInt(cpf.charAt(10));
+  const d = onlyDigits(val);
+  return d.length === 11;
 };
 
 const formatCPF = (val = '') => {
@@ -62,6 +53,7 @@ const isRandom = (val?: string) => {
   // treat as random when it's not email/phone/cpf
   return !isEmail(val) && !isPhone(val) && !isCPF(val);
 };
+
 
 const renderPixKey = (val?: string) => {
   if (!val) return '';
@@ -195,7 +187,18 @@ function CopyButton({ text }: { text: string }) {
         cursor: 'pointer'
       }}
     >
-      {copied ? 'Copied' : 'Copy'}
+      {copied ? (
+        // check icon
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        // clipboard icon
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <path d="M16 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )}
     </button>
   );
 }
