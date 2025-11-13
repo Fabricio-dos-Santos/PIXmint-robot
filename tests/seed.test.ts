@@ -13,7 +13,9 @@ const isEmailStrict = (val?: string) => {
 const isPhone = (val?: string) => {
   if (!val) return false;
   const d = onlyDigits(val);
-  return d.length === 10 || d.length === 11;
+  if (d.length === 10) return true;
+  if (d.length === 11) return d.charAt(2) === '9';
+  return false;
 };
 
 // CPF validation: only ensure 11 digits

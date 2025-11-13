@@ -19,7 +19,10 @@ const onlyDigits = (s = '') => s.replace(/\D/g, '');
 const isPhone = (val?: string) => {
   if (!val) return false;
   const digits = onlyDigits(val);
-  return digits.length === 10 || digits.length === 11;
+  // Accept 10-digit numbers or 11-digit mobile numbers where the 3rd digit is '9'
+  if (digits.length === 10) return true;
+  if (digits.length === 11) return digits.charAt(2) === '9';
+  return false;
 };
 
 const formatPhone = (val = '') => {
@@ -126,9 +129,10 @@ const maskPhone = (val: string) => {
 };
 
 const maskCPF = (val: string) => {
-  const d = onlyDigits(val).padStart(11, '0');
-  const last3 = d.slice(8, 11);
-  return `***.***.${last3.slice(0,3)}-${d.slice(9)}`;
+  // show CPF in standard mask 999.999.999-99 (no checksum validation here)
+  const d = onlyDigits(val);
+  if (d.length !== 11) return val;
+  return `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9,11)}`;
 };
 
 // (no wallet-type masks; wallets are treated as random pix keys)
