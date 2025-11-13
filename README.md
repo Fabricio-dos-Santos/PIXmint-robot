@@ -249,4 +249,8 @@ npm test
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
+## Implementation status
+
+We keep a living implementation status document at `docs/IMPLEMENTATION_STATUS.md` that lists implemented features and the remaining work (forms, edit/delete wiring, CI checks, etc.). Please consult that file for a developer-oriented checklist.
+
 ````
