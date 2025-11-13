@@ -71,28 +71,28 @@ const renderPixKey = (val?: string) => {
   const styleBadge: React.CSSProperties = { marginLeft: 8, padding: '2px 6px', borderRadius: 4, fontSize: 12 };
 
   if (isEmail(val)) return (
-    <span>
+    <span title={val}>
       {val}
       <span style={{ ...styleBadge, background: '#bee3f8', color: '#2b6cb0' }}>email</span>
     </span>
   );
 
   if (isPhone(val)) return (
-    <span>
+    <span title={val}>
       {formatPhone(val)}
       <span style={{ ...styleBadge, background: '#c6f6d5', color: '#2f855a' }}>telefone</span>
     </span>
   );
 
   if (isCPF(val)) return (
-    <span>
+    <span title={val}>
       {formatCPF(val)}
       <span style={{ ...styleBadge, background: '#fff5bf', color: '#b58900' }}>CPF</span>
     </span>
   );
 
   if (isHexWallet(val)) return (
-    <span>
+    <span title={val}>
       {val}
       <span style={{ ...styleBadge, background: '#f0f7ff', color: '#0a317b' }}>wallet</span>
     </span>
@@ -100,11 +100,64 @@ const renderPixKey = (val?: string) => {
 
   // random/other
   return (
-    <span>
+    <span title={val}>
       {val}
       <span style={{ ...styleBadge, background: '#fed7e2', color: '#9b2c2c' }}>random</span>
     </span>
   );
+};
+
+// --- Masking helpers: present masked values for privacy while keeping full value in title/tooltip ---
+const maskEmail = (val: string) => {
+  const [local, domain] = val.split('@');
+  if (!domain) return val;
+  const visible = local.length <= 2 ? local : local.slice(0, 2);
+  return `${visible}${'*'.repeat(Math.max(0, Math.min(6, local.length - visible.length)))}@${domain}`;
+};
+
+const maskPhone = (val: string) => {
+  const digits = onlyDigits(val);
+  if (digits.length < 4) return val;
+  const last4 = digits.slice(-4);
+  // keep DDD and show last 4
+  if (digits.length === 10) {
+    // DDD(2) + 8
+    const ddd = digits.slice(0, 2);
+    return `(${ddd}) ****-${last4}`;
+  }
+  if (digits.length === 11) {
+    const ddd = digits.slice(0, 2);
+    return `(${ddd}) 9****-${last4}`;
+  }
+  return `****${last4}`;
+};
+
+const maskCPF = (val: string) => {
+  const d = onlyDigits(val).padStart(11, '0');
+  const last3 = d.slice(8, 11);
+  return `***.***.${last3.slice(0,3)}-${d.slice(9)}`;
+};
+
+const maskWallet = (val: string) => {
+  if (!isHexWallet(val)) return val;
+  const head = val.slice(0, 6);
+  const tail = val.slice(-4);
+  return `${head}...${tail}`;
+};
+
+const maskRandom = (val: string) => {
+  if (val.length <= 8) return `${val.slice(0, 2)}...${val.slice(-2)}`;
+  return `${val.slice(0, 4)}...${val.slice(-4)}`;
+};
+
+// update render to show masked values (but keep full in title for copy)
+const renderPixKeyMasked = (val?: string) => {
+  if (!val) return '';
+  if (isEmail(val)) return <span title={val}>{maskEmail(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#2b6cb0' }}>email</span></span>;
+  if (isPhone(val)) return <span title={val}>{maskPhone(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#2f855a' }}>telefone</span></span>;
+  if (isCPF(val)) return <span title={val}>{maskCPF(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#b58900' }}>CPF</span></span>;
+  if (isHexWallet(val)) return <span title={val}>{maskWallet(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#0a317b' }}>wallet</span></span>;
+  return <span title={val}>{maskRandom(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#9b2c2c' }}>random</span></span>;
 };
 
 export default function Employees() {
@@ -160,7 +213,7 @@ export default function Employees() {
             {(data || []).map((e) => (
               <tr key={e.id}>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.name}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.pixKey}</td>
+                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{renderPixKeyMasked(e.pixKey)}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.wallet}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.network}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.createdAt ? formatDate(e.createdAt) : ''}</td>
