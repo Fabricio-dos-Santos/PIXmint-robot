@@ -13,7 +13,7 @@ export default function App() {
       </header>
       <main style={{ marginTop: 20 }}>
         <Routes>
-          <Route path="/" element={<div>Welcome to PIXmint frontend scaffold.</div>} />
+          <Route path="/" element={<div>Welcome to PIXmint!!!</div>} />
           <Route path="/employees" element={<Employees />} />
         </Routes>
       </main>

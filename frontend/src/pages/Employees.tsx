@@ -33,7 +33,7 @@ export default function Employees() {
     <div>
       <h2>Employees</h2>
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ddd' }}>
+  <table style={{ width: 'auto', borderCollapse: 'collapse', border: '1px solid #ddd', tableLayout: 'auto' }}>
           <thead>
             <tr>
               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Name</th>
@@ -41,6 +41,7 @@ export default function Employees() {
               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Wallet</th>
               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Network</th>
               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Created At</th>
+              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -51,6 +52,39 @@ export default function Employees() {
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.wallet}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.network}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.createdAt ? formatDate(e.createdAt) : ''}</td>
+                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>
+                  <button
+                    type="button"
+                    onClick={() => {}}
+                    style={{
+                      background: '#3182ce',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                      marginRight: 8
+                    }}
+                    aria-label={`Editar ${e.name || e.id}`}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {}}
+                    style={{
+                      background: '#e53e3e',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 10px',
+                      borderRadius: 4,
+                      cursor: 'pointer'
+                    }}
+                    aria-label={`Excluir ${e.name || e.id}`}
+                  >
+                    Excluir
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
