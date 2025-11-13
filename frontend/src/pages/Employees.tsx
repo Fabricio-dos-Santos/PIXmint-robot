@@ -160,6 +160,71 @@ const renderPixKeyMasked = (val?: string) => {
   return <span title={val}>{maskRandom(val)}<span style={{ marginLeft: 8, fontSize: 12, color: '#9b2c2c' }}>random</span></span>;
 };
 
+// Copy button component used next to pixKey; shows temporary "Copied" feedback
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      // fallback: create a temporary input
+      const inp = document.createElement('input');
+      inp.value = text;
+      document.body.appendChild(inp);
+      inp.select();
+      try {
+        document.execCommand('copy');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      } finally {
+        document.body.removeChild(inp);
+      }
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      title={copied ? 'Copied' : 'Copy full value'}
+      style={{
+        marginLeft: 8,
+        padding: '4px 8px',
+        fontSize: 12,
+        borderRadius: 4,
+        border: '1px solid #ddd',
+        background: copied ? '#2f855a' : 'white',
+        color: copied ? 'white' : '#333',
+        cursor: 'pointer'
+      }}
+    >
+      {copied ? 'Copied' : 'Copy'}
+    </button>
+  );
+}
+
+// Enhanced renderer: masked value with ellipsis and a copy button; full value in title
+const renderPixKeyWithCopy = (val?: string) => {
+  if (!val) return '';
+  let label = '';
+  let masked = '';
+  if (isEmail(val)) { label = 'email'; masked = maskEmail(val); }
+  else if (isPhone(val)) { label = 'telefone'; masked = maskPhone(val); }
+  else if (isCPF(val)) { label = 'CPF'; masked = maskCPF(val); }
+  else if (isHexWallet(val)) { label = 'wallet'; masked = maskWallet(val); }
+  else { label = 'random'; masked = maskRandom(val); }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }} title={val}>
+      <span style={{ maxWidth: 420, display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{masked}</span>
+      <span style={{ marginLeft: 8, fontSize: 12, color: label === 'email' ? '#2b6cb0' : label === 'telefone' ? '#2f855a' : label === 'CPF' ? '#b58900' : label === 'wallet' ? '#0a317b' : '#9b2c2c' }}>{label}</span>
+      <CopyButton text={val} />
+    </div>
+  );
+};
+
 export default function Employees() {
   const { data, error, isLoading } = useQuery({
     queryKey: ['employees'],
@@ -213,7 +278,7 @@ export default function Employees() {
             {(data || []).map((e) => (
               <tr key={e.id}>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.name}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{renderPixKeyMasked(e.pixKey)}</td>
+                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{renderPixKeyWithCopy(e.pixKey)}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.wallet}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.network}</td>
                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.createdAt ? formatDate(e.createdAt) : ''}</td>
