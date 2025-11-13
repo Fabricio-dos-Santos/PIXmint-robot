@@ -40,6 +40,23 @@ $frontendJob = Start-Job -Name pixmint-frontend -ScriptBlock {
 
 Write-Host "Both jobs started. Streaming logs (press Ctrl+C to stop)..."
 
+# Print clickable links (OSC 8) for supported terminals; also print plain URLs as fallback
+$esc = [char]27
+function Write-Hyperlink([string]$url, [string]$text = $null) {
+    if (-not $text) { $text = $url }
+    # OSC 8 hyperlink: ESC ] 8 ;; url ESC \ text ESC ] 8 ;; ESC \
+    $link = $esc + ']8;;' + $url + $esc + '\' + $text + $esc + ']8;;' + $esc + '\'
+    Write-Host $link
+    Write-Host "(link: $url)"
+}
+
+$frontendUrl = 'http://localhost:5173'
+$backendUrl = $ApiUrl
+
+Write-Host "Application URLs:"
+Write-Host "Frontend: " -NoNewline; Write-Hyperlink $frontendUrl 'Open Frontend'
+Write-Host "Backend API: " -NoNewline; Write-Hyperlink $backendUrl 'Open API'
+
 # Tail both logs in same stream
 # Get-Content supports multiple paths; it will stream appended lines as they appear
 Get-Content -Path $backendLog, $frontendLog -Wait -Tail 10 | ForEach-Object {

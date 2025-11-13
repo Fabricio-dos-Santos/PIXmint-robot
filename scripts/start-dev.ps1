@@ -31,3 +31,19 @@ Start-Process powershell -ArgumentList @(
 )
 
 Write-Host "Launched backend and frontend in separate PowerShell windows."
+
+# Print clickable links (OSC 8) and fallback URLs
+$esc = [char]27
+function Write-Hyperlink([string]$url, [string]$text = $null) {
+    if (-not $text) { $text = $url }
+    $link = $esc + ']8;;' + $url + $esc + '\' + $text + $esc + ']8;;' + $esc + '\'
+    Write-Host $link
+    Write-Host "(link: $url)"
+}
+
+$frontendUrl = 'http://localhost:5173'
+$backendUrl = 'http://localhost:3000'
+
+Write-Host "Application URLs:"
+Write-Host "Frontend: " -NoNewline; Write-Hyperlink $frontendUrl 'Open Frontend'
+Write-Host "Backend API: " -NoNewline; Write-Hyperlink $backendUrl 'Open API'
