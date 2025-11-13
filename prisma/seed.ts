@@ -6,12 +6,12 @@ async function main() {
   console.log('Seeding database with example employees...');
 
   const employees = [
-    { name: 'Dev Sepolia', pixKey: 'dev1@pix', wallet: '0x' + '1'.repeat(40), network: 'sepolia' },
-    { name: 'Dev Ethereum', pixKey: 'dev2@pix', wallet: '0x' + '2'.repeat(40), network: 'ethereum' },
-    { name: 'Dev Polygon', pixKey: 'dev3@pix', wallet: '0x' + '3'.repeat(40), network: 'polygon' },
-    { name: 'Dev Arbitrum', pixKey: 'dev4@pix', wallet: '0x' + '4'.repeat(40), network: 'arbitrum' },
-    { name: 'Dev BNB', pixKey: 'dev5@pix', wallet: '0x' + '5'.repeat(40), network: 'bnb' },
-    { name: 'Dev Base', pixKey: 'dev6@pix', wallet: '0x' + '6'.repeat(40), network: 'base' },
+    { name: 'Ana Silva', pixKey: 'ana.silva@pix', wallet: '0x' + 'a'.repeat(40), network: 'sepolia' },
+    { name: 'Bruno Costa', pixKey: 'bruno.costa@pix', wallet: '0x' + 'b'.repeat(40), network: 'ethereum' },
+    { name: 'Carla Mendes', pixKey: 'carla.mendes@pix', wallet: '0x' + 'c'.repeat(40), network: 'polygon' },
+    { name: 'Diego Rocha', pixKey: 'diego.rocha@pix', wallet: '0x' + 'd'.repeat(40), network: 'arbitrum' },
+    { name: 'Eva Pereira', pixKey: 'eva.pereira@pix', wallet: '0x' + 'e'.repeat(40), network: 'bnb' },
+    { name: 'Felipe Sousa', pixKey: 'felipe.sousa@pix', wallet: '0x' + 'f'.repeat(40), network: 'base' },
   ];
 
   // Clear existing test/dev employees to ensure idempotent seed
