@@ -15,6 +15,10 @@ $frontendLog = Join-Path $logsDir 'frontend.log'
 Remove-Item -Path $backendLog -ErrorAction SilentlyContinue
 Remove-Item -Path $frontendLog -ErrorAction SilentlyContinue
 
+# ensure logs exist to allow Get-Content to open them
+New-Item -Path $backendLog -ItemType File -Force | Out-Null
+New-Item -Path $frontendLog -ItemType File -Force | Out-Null
+
 Write-Host "Starting backend as a background job (output -> $backendLog)"
 $backendJob = Start-Job -Name pixmint-backend -ScriptBlock {
     param($root, $log)
