@@ -238,19 +238,32 @@ export default function Employees() {
     }
   });
 
+  // simple client-side pagination (presentation-only)
+  const [page, setPage] = React.useState(1);
+  const perPage = 8;
+  const list = data || [];
+  const total = list.length;
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+  const start = (currentPage - 1) * perPage;
+  const end = start + perPage;
+  const pageItems = list.slice(start, end);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading employees</div>;
 
   const formatDate = (iso?: string) => {
     if (!iso) return '';
     const d = new Date(iso);
-    return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    // dd/mm/yyyy in pt-BR
+    return d.toLocaleDateString('pt-BR');
   };
 
   return (
-    <div>
-      <h2>Employees</h2>
-      <div style={{ marginBottom: 12 }}>
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
+      <div style={{ width: '100%', maxWidth: 1100 }}>
+        <h2>Employees</h2>
+        <div style={{ marginBottom: 12 }}>
         <button
           type="button"
           onClick={() => {}}
@@ -266,27 +279,27 @@ export default function Employees() {
           Novo
         </button>
       </div>
-      <div style={{ overflowX: 'auto' }}>
-  <table style={{ width: 'auto', borderCollapse: 'collapse', border: '1px solid #ddd', tableLayout: 'auto' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Name</th>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>PixKey</th>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Wallet</th>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Network</th>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Created At</th>
-              <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(data || []).map((e) => (
-              <tr key={e.id}>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.name}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{renderPixKeyWithCopy(e.pixKey)}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.wallet}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.network}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>{e.createdAt ? formatDate(e.createdAt) : ''}</td>
-                <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', justifyContent: 'center' }}>
+  <table style={{ width: 'auto', borderCollapse: 'collapse', border: '1px solid #ddd', tableLayout: 'auto', margin: '0 auto', fontSize: 13 }}>
+           <thead>
+             <tr>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Name</th>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>PixKey</th>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Wallet</th>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Network</th>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Created At</th>
+               <th style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Ações</th>
+             </tr>
+           </thead>
+           <tbody>
+            {pageItems.map((e) => (
+               <tr key={e.id}>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.name}</td>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{renderPixKeyWithCopy(e.pixKey)}</td>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.wallet}</td>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.network}</td>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{e.createdAt ? formatDate(e.createdAt) : ''}</td>
+                 <td style={{ border: '1px solid #ddd', padding: 8, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   <button
                     type="button"
                     onClick={() => {}}
@@ -342,6 +355,41 @@ export default function Employees() {
             ))}
           </tbody>
         </table>
+        </div>
+
+        {/* pagination controls centered under the table */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontSize: 13, color: '#444' }}>{total === 0 ? 'Nenhum registro' : `Mostrando ${start + 1}-${Math.min(end, total)} de ${total}`}</div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button type="button" onClick={() => setPage(1)} disabled={currentPage === 1} title="Primeira página" style={{ padding: '6px 8px', borderRadius: 4, border: '1px solid #ddd', background: currentPage === 1 ? '#f3f3f3' : 'white', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }} aria-label="Primeira página">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M19 18L13 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M11 18L5 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <button type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} title="Página anterior" style={{ padding: '6px 8px', borderRadius: 4, border: '1px solid #ddd', background: currentPage === 1 ? '#f3f3f3' : 'white', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }} aria-label="Página anterior">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M15 18L9 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', padding: '6px 10px', border: '1px solid #eee', borderRadius: 4, background: '#fafafa', minWidth: 88, justifyContent: 'center' }}>Página {currentPage} / {totalPages}</div>
+
+              <button type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} title="Próxima página" style={{ padding: '6px 8px', borderRadius: 4, border: '1px solid #ddd', background: currentPage === totalPages ? '#f3f3f3' : 'white', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }} aria-label="Próxima página">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <button type="button" onClick={() => setPage(totalPages)} disabled={currentPage === totalPages} title="Última página" style={{ padding: '6px 8px', borderRadius: 4, border: '1px solid #ddd', background: currentPage === totalPages ? '#f3f3f3' : 'white', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }} aria-label="Última página">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M5 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M13 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
