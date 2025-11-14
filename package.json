@@ -7,9 +7,9 @@
     "build": "tsc",
     "start": "node dist/employee.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"node_modules\\.bin\\ts-node\" src/employee.ts",
-  "dev:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev.ps1",
-  "dev:all:bg": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev-bg.ps1",
-    "seed": "ts-node prisma/seed.ts",
+    "dev:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev.ps1",
+    "dev:all:bg": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev-bg.ps1",
+  "seed": "npx prisma generate && ts-node prisma/seed.ts",
     "test": "jest --passWithNoTests",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write 'src/**/*.{ts,json}'",
@@ -17,7 +17,7 @@
     "lint-format": "npm run lint && npm run format"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18 <19"
   },
   "license": "MIT",
   "dependencies": {
@@ -39,6 +39,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
+    "jsdom": "^27.2.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "prisma": "^6.19.0",
@@ -46,4 +47,5 @@
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2"
   }
+  
 }

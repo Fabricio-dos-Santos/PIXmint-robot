@@ -308,11 +308,40 @@ npm test
 ```
 
 Nota sobre Vitest no Windows
-- Se você observar mensagens do tipo "Timeout starting forks runner" em ambientes Windows, há duas opções razoáveis:
-  1. Usar execução em processo único — nós adicionamos localmente um `frontend/vitest.config.ts` que define `threads: false` e registra um `setupFiles` para habilitar os matchers do Testing Library (`@testing-library/jest-dom`).
-  2. Rodar os testes em CI (GitHub Actions) onde o ambiente é limpo e esses problemas normalmente não ocorrem.
 
-As alterações locais de configuração de testes feitas neste repositório (sem commit prévio) podem ser revertidas se você preferir. Se quiser que eu commite essas mudanças, confirme e eu as enviarei direto para `main`.
+- Se você observar mensagens do tipo "Timeout starting forks runner" em ambientes Windows, há duas opções razoáveis:
+  1. Usar execução em processo único — há um arquivo `frontend/vitest.config.ts` (local) que define `threads: false`, `isolate: false` e desabilita o pool de forks para reduzir flakiness no Windows.
+  2. Executar os testes no CI (por exemplo, GitHub Actions) com Node 18 — ambientes limpos do CI normalmente não reproduzem esse problema.
+
+Como reverter uma instalação automática indesejada (ex.: quando `npx vitest` sugeriu instalar `jsdom` e o npm alterou `node_modules`/`package-lock.json` no diretório raiz):
+
+1. Do diretório raiz do repositório, remova o diretório `node_modules` e o arquivo `package-lock.json` que foram criados/alterados:
+
+```powershell
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+```
+
+2. Reinstale apenas as dependências listadas em `package.json` (isso recriará `node_modules` e `package-lock.json` coerentes com `package.json`):
+
+```powershell
+npm install
+```
+
+3. Se você também quer garantir que o `frontend/` esteja consistente, faça o mesmo dentro de `frontend` (opcional):
+
+```powershell
+cd frontend
+Remove-Item -Recurse -Force node_modules
+Remove-Item -Force package-lock.json
+npm install
+```
+
+Isso remove quaisquer pacotes instalados fora das dependências listadas nos respectivos `package.json` e restaura um estado limpo.
+
+Observação sobre Node.js
+
+- Recomendamos usar Node 18.x para rodar os testes localmente (especialmente Vitest no Windows). Há um arquivo `.nvmrc` em `frontend/` e os `engines` no `package.json` foram atualizados para indicar `>=18 <19`.
 
 ## 🤝 Contribuindo
 

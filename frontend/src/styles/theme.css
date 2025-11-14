@@ -1,0 +1,27 @@
+/* Dark theme styles applied via .app-dark on root container */
+.app-dark {
+  background: #0b1220;
+  color: #ffffff;
+}
+
+.app-dark body {
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+.app-dark .table {
+  border-color: #1f2937;
+}
+
+.app-dark .cell {
+  border-color: #1f2937;
+}
+
+.app-dark button {
+  color: #ffffff;
+}
+
+/* ensure pageBadge border adapts to dark theme */
+.app-dark .pageBadge {
+  border-color: #1f2937;
+}

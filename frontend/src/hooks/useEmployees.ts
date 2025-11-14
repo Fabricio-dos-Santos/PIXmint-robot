@@ -1,0 +1,48 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import api from '../lib/api';
+
+export type Employee = {
+  id: string;
+  name: string;
+  pixKey: string;
+  wallet: string;
+  network?: string;
+  createdAt?: string;
+};
+
+export default function useEmployees() {
+  const queryClient = useQueryClient();
+
+  const query = useQuery<Employee[]>({
+    queryKey: ['employees'],
+    queryFn: async () => {
+      const res = await api.get<Employee[]>('/employees');
+      return res.data;
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/employees/${id}`);
+      return id;
+    },
+    onSuccess: (_, id) => {
+      // invalidate or update cache
+      // react-query v4 expects the query key typed as readonly
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    }
+  });
+
+  const removeEmployee = async (id: string) => {
+    return deleteMutation.mutateAsync(id);
+  };
+
+  return {
+    data: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+    refetch: query.refetch,
+    removeEmployee,
+    deleteStatus: deleteMutation.status
+  };
+}
