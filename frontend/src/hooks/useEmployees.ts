@@ -10,13 +10,14 @@ export type Employee = {
   createdAt?: string;
 };
 
-export default function useEmployees() {
+export default function useEmployees(search?: string) {
   const queryClient = useQueryClient();
 
   const query = useQuery<Employee[]>({
-    queryKey: ['employees'],
+    queryKey: ['employees', search],
     queryFn: async () => {
-      const res = await api.get<Employee[]>('/employees');
+      const params = search ? { search } : {};
+      const res = await api.get<Employee[]>('/employees', { params });
       return res.data;
     }
   });

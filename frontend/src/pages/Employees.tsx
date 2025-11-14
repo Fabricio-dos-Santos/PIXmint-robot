@@ -18,11 +18,12 @@ type Employee = {
 // PixKey rendering is handled by `components/PixKey.tsx` (imported above)
 
 export default function Employees() {
-  const { data, error, isLoading, removeEmployee } = useEmployees();
+  const [filterName, setFilterName] = React.useState('');
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const { data, error, isLoading, removeEmployee } = useEmployees(searchTerm);
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
-  const [filterName, setFilterName] = React.useState('');
   const perPage = 8;
   const list = data || [];
   const total = list.length;
@@ -31,6 +32,23 @@ export default function Employees() {
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
   const pageItems = list.slice(start, end);
+
+  const handleSearch = () => {
+    setSearchTerm(filterName);
+    setPage(1); // Reset to first page on new search
+  };
+
+  const handleClearFilter = () => {
+    setFilterName('');
+    setSearchTerm('');
+    setPage(1); // Reset to first page
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading employees</div>;
@@ -75,6 +93,7 @@ export default function Employees() {
               placeholder="Digite para filtrar"
               value={filterName}
               onChange={(e) => setFilterName(e.target.value)}
+              onKeyPress={handleKeyPress}
               style={{
                 padding: '8px 12px',
                 borderRadius: 4,
@@ -87,7 +106,7 @@ export default function Employees() {
             />
             <button
               type="button"
-              onClick={() => { }}
+              onClick={handleSearch}
               style={{
                 background: '#2b6cb0',
                 color: 'white',
@@ -103,6 +122,26 @@ export default function Employees() {
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={handleClearFilter}
+              style={{
+                background: '#718096',
+                color: 'white',
+                border: 'none',
+                padding: '8px',
+                borderRadius: 4,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Limpar filtro"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>

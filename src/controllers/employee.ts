@@ -13,9 +13,10 @@ export const employeeController = {
     }
   },
 
-  list: async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  list: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const employees = await employeeService.listEmployees();
+      const search = req.query.search as string | undefined;
+      const employees = await employeeService.listEmployees(search);
       res.json(employees);
     } catch (err) {
       next(err);

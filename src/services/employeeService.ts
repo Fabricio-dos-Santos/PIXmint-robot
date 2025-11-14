@@ -13,8 +13,8 @@ export const employeeService = {
     return employeeModel.create(input);
   },
 
-  async listEmployees(): Promise<Employee[]> {
-    return employeeModel.findAll();
+  async listEmployees(search?: string): Promise<Employee[]> {
+    return employeeModel.findAll(search);
   },
 
   async getEmployee(id: string): Promise<Employee> {

@@ -26,9 +26,26 @@ export const employeeModel = {
     return toDTO(record);
   },
 
-  findAll: async (): Promise<Employee[]> => {
-    const list = await prisma.employee.findMany();
-    return list.map(toDTO);
+  findAll: async (search?: string): Promise<Employee[]> => {
+    if (!search) {
+      const list = await prisma.employee.findMany({ orderBy: { createdAt: 'desc' } });
+      return list.map(toDTO);
+    }
+
+    const searchPattern = `%${search.toLowerCase()}%`;
+    const searchExact = search.toLowerCase();
+
+    const results = await prisma.$queryRaw`
+      SELECT * FROM Employee 
+      WHERE 
+        LOWER(name) LIKE ${searchPattern} OR
+        LOWER(pixKey) LIKE ${searchPattern} OR
+        LOWER(wallet) LIKE ${searchPattern} OR
+        LOWER(network) = ${searchExact}
+      ORDER BY createdAt DESC
+    `;
+
+    return (results as any[]).map(toDTO);
   },
 
   findById: async (id: string): Promise<Employee | null> => {

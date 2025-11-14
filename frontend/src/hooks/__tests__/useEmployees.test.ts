@@ -30,6 +30,37 @@ describe('useEmployees - delete operation', () => {
     React.createElement(QueryClientProvider, { client: queryClient }, children)
   );
 
+  it('should fetch employees with search param', async () => {
+    const mockEmployees = [
+      { id: '1', name: 'Maria Silva', pixKey: 'maria@test.com', wallet: '0xabc123', network: 'ethereum' },
+    ];
+
+    vi.mocked(api.get).mockResolvedValue({ data: mockEmployees });
+
+    const { result } = renderHook(() => useEmployees('maria'), { wrapper });
+
+    await waitFor(() => expect(result.current.data).toEqual(mockEmployees));
+
+    // Verify GET was called with search param
+    expect(api.get).toHaveBeenCalledWith('/employees', { params: { search: 'maria' } });
+  });
+
+  it('should fetch all employees when no search param', async () => {
+    const mockEmployees = [
+      { id: '1', name: 'Alice Silva', pixKey: 'alice@test.com', wallet: '0xabc123', network: 'ethereum' },
+      { id: '2', name: 'Bob Costa', pixKey: '11987654321', wallet: '0xdef456', network: 'polygon' },
+    ];
+
+    vi.mocked(api.get).mockResolvedValue({ data: mockEmployees });
+
+    const { result } = renderHook(() => useEmployees(), { wrapper });
+
+    await waitFor(() => expect(result.current.data).toEqual(mockEmployees));
+
+    // Verify GET was called without params
+    expect(api.get).toHaveBeenCalledWith('/employees', { params: {} });
+  });
+
   it('should delete an employee by id', async () => {
     const mockEmployees = [
       { id: '1', name: 'Alice Silva', pixKey: 'alice@test.com', wallet: '0xabc123', network: 'ethereum' },

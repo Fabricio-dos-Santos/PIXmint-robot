@@ -7,12 +7,15 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 ### Backend
 - ✅ CRUD completo de employees (GET, POST, PUT, DELETE)
 - ✅ Validação de pixKey (email, telefone, CPF, wallet, random)
-- ✅ Seed automático do banco de dados
+- ✅ Busca global case-insensitive com query param `?search=termo` (busca em name, pixKey, wallet, network)
+- ✅ Seed automático do banco de dados com script PowerShell (stop processes + generate + seed)
 - ✅ Documentação Swagger/OpenAPI
-- ✅ Testes unitários e de integração (Jest)
+- ✅ Testes unitários e de integração (Jest) - 19 testes passando
 
 ### Frontend
 - ✅ Listagem de employees com paginação client-side
+- ✅ Busca global integrada com backend (query param `?search=termo`)
+- ✅ Botão de limpar filtro (reset search + refetch)
 - ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton)
 - ✅ Máscaras inteligentes para pixKey:
   - Email: exibição parcial com domínio preservado
@@ -21,17 +24,15 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
   - Wallet: `0x12345...12345` (primeiros 5 + últimos 5, preservando prefixo `0x`)
   - Random: primeiros 5 + últimos 5 caracteres
 - ✅ Botão de copiar para cada pixKey
-- ✅ Campo de filtro por nome (UI implementada)
 - ✅ Operação de delete com confirmação
 - ✅ Tema escuro
 - ✅ Cantos arredondados nas tabelas
-- ✅ Testes de hooks e componentes (Vitest + React Testing Library)
+- ✅ Testes de hooks e componentes (Vitest + React Testing Library) - 11 testes passando
 
 ### Funcionalidades Planejadas
 - ⏳ Integração com PIX para geração de QR Code
 - ⏳ Conversão automática para StableCoin
 - ⏳ Modal de criação/edição de employees
-- ⏳ Aplicação do filtro de nome na listagem
 
 ## 📋 Pré-requisitos
 
@@ -157,6 +158,7 @@ A documentação completa da API está disponível em `/docs` (Swagger UI) quand
 #### Employees
 
 - **GET /employees** - Lista todos os employees
+- **GET /employees?search=termo** - Busca employees por termo (case-insensitive em name, pixKey, wallet, network)
 - **GET /employees/:id** - Busca um employee por ID
 - **POST /employees** - Cria um novo employee
 - **PUT /employees/:id** - Atualiza um employee existente
@@ -181,10 +183,10 @@ A documentação completa da API está disponível em `/docs` (Swagger UI) quand
 npm test
 ```
 
-**Status:** ✅ 3 suites, 9 testes passando
+**Status:** ✅ 3 suites, 19 testes passando
 - Testes de serviços (`employeeService.test.ts`)
 - Testes de modelos (`employee.test.ts`)
-- Testes de integração (`employee.integration.test.ts`)
+- Testes de integração (`employee.integration.test.ts`) - inclui 10 testes de busca global
 
 ### Frontend (Vitest)
 
@@ -193,8 +195,8 @@ cd frontend
 npm test
 ```
 
-**Status:** ✅ 3 suites, 9 testes passando
-- Testes de hooks (`useEmployees.test.ts`) - inclui testes da operação de delete
+**Status:** ✅ 3 suites, 11 testes passando
+- Testes de hooks (`useEmployees.test.ts`) - inclui testes da operação de delete e busca global
 - Testes de componentes (`EmployeeTable.test.tsx`)
 - Testes de utils (`pixKeyUtils.test.ts`)
 
@@ -343,6 +345,18 @@ Fabricio dos Santos - [@Fabricio-dos-Santos](https://github.com/Fabricio-dos-San
 Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://github.com/Fabricio-dos-Santos/PIXmint-robot)
 
 ## 📝 Changelog
+
+### v0.3.0 (2024-11-14)
+- ✅ Implementada busca global case-insensitive com query param `?search=termo`
+- ✅ Backend: raw SQL para busca em name, pixKey, wallet, network
+- ✅ Frontend: integração de busca com hook `useEmployees`
+- ✅ Botão de limpar filtro com ícone X
+- ✅ Automatização de `npm run seed` com script PowerShell
+- ✅ Script `run-seed.ps1`: para processos Node.js e jobs antes de seed
+- ✅ 10 novos testes backend de busca (19 total)
+- ✅ 2 novos testes frontend de busca (11 total)
+- ✅ Removidos arquivos não utilizados (useDeleteEmployee.ts, check-seed.ts, dump-pixkeys.ts)
+- ✅ Documentação atualizada com novas funcionalidades
 
 ### v0.2.0 (2024-11-14)
 - ✅ Implementado CRUD completo de employees no backend
