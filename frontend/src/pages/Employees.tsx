@@ -22,6 +22,7 @@ export default function Employees() {
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
+  const [filterName, setFilterName] = React.useState('');
   const perPage = 8;
   const list = data || [];
   const total = list.length;
@@ -38,7 +39,7 @@ export default function Employees() {
     <div className="app-dark" style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 1100 }}>
         <h2>Employees</h2>
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
           <button
             type="button"
             onClick={() => { }}
@@ -55,13 +56,65 @@ export default function Employees() {
           </button>
         </div>
 
-        {/* replaced by EmployeeTable component */}
-        <EmployeeTable
-          items={pageItems}
-          renderPixKey={(val: string | undefined) => <PixKey value={val} showLabel={!isWallet(val)} />}
-          onEdit={(id: string) => { /* TODO: edit handler */ }}
-          onDelete={(id: string) => { removeEmployee(id).catch(() => { }); }}
-        />
+        {/* Table container with filter inside */}
+        <div style={{ 
+          borderRadius: 8,
+          overflow: 'hidden'
+        }}>
+          {/* Filter input and search button */}
+          <div style={{ 
+            padding: '12px',
+            background: 'rgba(43, 108, 176, 0.05)',
+            display: 'flex', 
+            gap: 8, 
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <input
+              type="text"
+              placeholder="Digite para filtrar"
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                borderRadius: 4,
+                border: '1px solid #2b6cb0',
+                background: 'transparent',
+                color: 'inherit',
+                fontSize: '14px',
+                width: '200px'
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => { }}
+              style={{
+                background: '#2b6cb0',
+                color: 'white',
+                border: 'none',
+                padding: '8px',
+                borderRadius: 4,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Pesquisar"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          {/* replaced by EmployeeTable component */}
+          <EmployeeTable
+            items={pageItems}
+            renderPixKey={(val: string | undefined) => <PixKey value={val} showLabel={!isWallet(val)} />}
+            onEdit={(id: string) => { /* TODO: edit handler */ }}
+            onDelete={(id: string) => { removeEmployee(id).catch(() => { }); }}
+          />
+        </div>
 
         {/* pagination controls centered under the table */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
