@@ -1,21 +1,35 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Employees from './pages/Employees';
+import Sidebar from './components/Sidebar';
 
 export default function App() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [employeeModalOpen, setEmployeeModalOpen] = useState(false);
+  
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', padding: 20 }}>
-      <header>
-        <h1>PIXmint</h1>
-        <nav>
-          <Link to="/">Home</Link> | <Link to="/employees">Employees</Link>
-        </nav>
-      </header>
-      <main style={{ marginTop: 20 }}>
-        <Routes>
-          <Route path="/" element={<div>Welcome to PIXmint!!!</div>} />
-          <Route path="/employees" element={<Employees />} />
-        </Routes>
+    <div style={{ display: 'flex' }}>
+      <Sidebar onNewEmployee={() => setEmployeeModalOpen(true)} />
+      <main style={{
+        marginLeft: sidebarCollapsed ? '60px' : '240px',
+        width: '100%',
+        minHeight: '100vh',
+        transition: 'margin-left 0.3s ease',
+      }}>
+        <div style={{ padding: 20 }}>
+          <Routes>
+            <Route path="/" element={<div style={{ color: '#e5e7eb' }}>Welcome to PIXmint!!!</div>} />
+            <Route 
+              path="/employees" 
+              element={
+                <Employees 
+                  externalModalOpen={employeeModalOpen}
+                  onCloseExternalModal={() => setEmployeeModalOpen(false)}
+                />
+              } 
+            />
+          </Routes>
+        </div>
       </main>
     </div>
   );

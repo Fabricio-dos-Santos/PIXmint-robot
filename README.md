@@ -388,6 +388,29 @@ Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://
 
 ## 📝 Changelog
 
+### v0.6.0 (2024-11-14)
+- ✅ **Menu lateral (Sidebar) com navegação:**
+  - Componente `Sidebar.tsx` fixo à esquerda com collapse/expand
+  - Menu items: Home e Colaboradores
+  - Submenu "New" para criar novo colaborador
+  - Destaque visual na rota ativa (borda roxa)
+  - Tema escuro consistente
+- ✅ **Ordenação alfabética por nome:**
+  - Botão de ordenação no header da tabela (coluna Name)
+  - 3 estados: null → asc → desc → null
+  - Ordenação com `localeCompare('pt-BR')`
+  - Ícones SVG para cada estado
+- ✅ **Refinamentos de tema escuro:**
+  - Body: `#090e1a` (20% mais escuro)
+  - Barra de filtro: `#0b1220` (mesma cor do container)
+  - Background consistente em toda aplicação
+- ✅ **Tradução para português:**
+  - "Employees" → "Colaboradores"
+  - "New Employee" → "Novo Colaborador"
+  - "Edit Employee" → "Editar Colaborador"
+- ✅ Integração modal com sidebar (estado gerenciado no App.tsx)
+- ✅ Removido header redundante e botão "Novo" da página Employees
+
 ### v0.5.0 (2024-11-14)
 - ✅ **Separação de validação frontend/backend:**
   - Frontend (`fieldValidation.ts`): validação de UX apenas (required, formato básico)

@@ -18,7 +18,12 @@ type Employee = {
 
 // PixKey rendering is handled by `components/PixKey.tsx` (imported above)
 
-export default function Employees() {
+type EmployeesProps = {
+  externalModalOpen?: boolean;
+  onCloseExternalModal?: () => void;
+};
+
+export default function Employees({ externalModalOpen, onCloseExternalModal }: EmployeesProps) {
   const [filterName, setFilterName] = React.useState('');
   const [searchTerm, setSearchTerm] = React.useState('');
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -113,7 +118,17 @@ export default function Employees() {
   const handleCloseModal = () => {
     setModalOpen(false);
     setEmployeeToEdit(null);
+    if (onCloseExternalModal) {
+      onCloseExternalModal();
+    }
   };
+
+  // Sync external modal state
+  React.useEffect(() => {
+    if (externalModalOpen) {
+      setModalOpen(true);
+    }
+  }, [externalModalOpen]);
 
   const getBackendErrors = (): string[] => {
     const error = employeeToEdit ? updateError : createError;
@@ -137,29 +152,11 @@ export default function Employees() {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading employees</div>;
+  if (error) return <div>Erro ao carregar colaboradores</div>;
 
   return (
     <div className="app-dark" style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 1100 }}>
-        <h2>Employees</h2>
-        <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            style={{
-              background: '#2f855a',
-              color: 'white',
-              border: 'none',
-              padding: '8px 12px',
-              borderRadius: 4,
-              cursor: 'pointer'
-            }}
-          >
-            Novo
-          </button>
-        </div>
-
         <EmployeeModal
           isOpen={modalOpen}
           onClose={handleCloseModal}

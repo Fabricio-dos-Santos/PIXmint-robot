@@ -260,7 +260,7 @@ export default function EmployeeModal({
       <div className={styles.modal}>
         <div className={styles.header}>
           <h2 id="modal-title" className={styles.title}>
-            {isEditMode ? 'Editar Funcionário' : 'Novo Funcionário'}
+            {isEditMode ? 'Editar Colaborador' : 'Novo Colaborador'}
           </h2>
           <button
             type="button"
