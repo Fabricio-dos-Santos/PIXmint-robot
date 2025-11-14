@@ -103,22 +103,29 @@ export default function App() {
             data-container={location.pathname === '/' ? 'home-main-content' : 'colaboradores-main-content'}
             style={{ 
               flex: 1,
-              padding: '20px',
-              borderBottom: showContainers ? '1px solid #1a2332' : 'none',
               overflow: 'hidden',
             }}>
-            <Routes>
-              <Route path="/" element={<div style={{ color: '#e5e7eb' }}>Welcome to PIXmint!!!</div>} />
-              <Route 
-                path="/employees" 
-                element={
-                  <Employees 
-                    externalModalOpen={employeeModalOpen}
-                    onCloseExternalModal={() => setEmployeeModalOpen(false)}
-                  />
-                } 
-              />
-            </Routes>
+            <div style={{
+              background: '#0b1220',
+              borderRadius: '8px',
+              padding: '20px',
+              border: '1px solid #1a2332',
+              color: '#e5e7eb',
+              height: '100%',
+            }}>
+              <Routes>
+                <Route path="/" element={<div style={{ color: '#e5e7eb' }}>Welcome to PIXmint!!!</div>} />
+                <Route 
+                  path="/employees" 
+                  element={
+                    <Employees 
+                      externalModalOpen={employeeModalOpen}
+                      onCloseExternalModal={() => setEmployeeModalOpen(false)}
+                    />
+                  } 
+                />
+              </Routes>
+            </div>
           </div>
         )}
         
@@ -128,8 +135,9 @@ export default function App() {
             <div 
               data-separator="colaboradores-horizontal"
               style={{
-                height: '1px',
-                background: '#1a2332',
+                height: '3px',
+                background: 'linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.6) 50%, transparent 100%)',
+                boxShadow: '0 1px 8px rgba(255, 215, 0, 0.4)',
                 margin: '0',
               }} 
             />
@@ -139,7 +147,6 @@ export default function App() {
               data-container="colaboradores-bottom-panel"
               style={{
                 flex: 1,
-                padding: '20px',
                 overflow: 'hidden',
               }}>
               <div style={{

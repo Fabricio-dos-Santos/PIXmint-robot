@@ -13,10 +13,21 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 - ✅ Testes unitários e de integração (Jest) - 19 testes passando
 
 ### Frontend
-- ✅ Listagem de employees com paginação client-side
+- ✅ Listagem de employees com paginação client-side (6 registros por página)
 - ✅ Busca global integrada com backend (query param `?search=termo`)
 - ✅ Botão de limpar filtro (reset search + refetch)
-- ✅ **Modal de criação de employees com validação completa:**
+- ✅ **Sidebar com navegação:**
+  - Menu lateral colapsável (240px/60px)
+  - Items: Home 🏠 e Colaboradores 👥
+  - Submenu expansível com toggle (New + Import)
+  - Estilo Glass Morphism (transparência com blur)
+  - Navegação contextual entre rotas
+- ✅ **Sistema de containers condicionais:**
+  - Layout vertical 50/50 em Colaboradores
+  - Container de importação em tela inteira
+  - Nomenclatura padronizada com data-attributes
+  - Reset automático de estados ao mudar de menu
+- ✅ **Modal de criação/edição de employees com validação completa:**
   - Validação em tempo real (onBlur) em todos os campos
   - Máscaras de input: CPF (`000.000.000-00`), Telefone (`(00) 00000-0000`), Wallet (`0x` + hex)
   - **Separação de responsabilidades:** Frontend valida UX básica, backend valida regras de negócio
@@ -24,7 +35,11 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
   - Detecção automática de tipo de PIX (CPF, telefone, email, random)
   - Mensagens de erro específicas por campo
   - Network obrigatória
-- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton, EmployeeModal)
+  - Fecha ao clicar fora ou pressionar ESC
+- ✅ **Ordenação alfabética por nome:**
+  - 3 estados: null → asc → desc
+  - Botão visual com ícones no header da tabela
+- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton, EmployeeModal, Sidebar)
 - ✅ Máscaras inteligentes para pixKey:
   - Email: exibição parcial com domínio preservado
   - CPF: formato `XXX.XX*.***-**`
@@ -33,14 +48,15 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
   - Random: primeiros 5 + últimos 5 caracteres
 - ✅ Botão de copiar para cada pixKey
 - ✅ Operação de delete com confirmação
-- ✅ Tema escuro
-- ✅ Cantos arredondados nas tabelas
+- ✅ Tema escuro completo (body #090e1a, containers #0b1220)
+- ✅ Fonte da tabela reduzida (12px) para melhor densidade
 - ✅ Testes de hooks e componentes (Vitest + React Testing Library) - **53 testes passando**
 
 ### Funcionalidades Planejadas
+- ⏳ Funcionalidade de importação em massa de colaboradores (template + upload)
 - ⏳ Integração com PIX para geração de QR Code
 - ⏳ Conversão automática para StableCoin
-- ⏳ Modal de edição de employees
+- ⏳ Dashboard de pagamentos
 
 ## 📋 Pré-requisitos
 
@@ -264,10 +280,12 @@ PIXmint-robot/
 │   ├── src/
 │   │   ├── components/         # Componentes reutilizáveis
 │   │   │   ├── EmployeeTable.tsx
-│   │   │   ├── EmployeeModal.tsx      # Modal de criação
+│   │   │   ├── EmployeeModal.tsx      # Modal de criação/edição
 │   │   │   ├── Pagination.tsx
 │   │   │   ├── PixKey.tsx
-│   │   │   └── CopyButton.tsx
+│   │   │   ├── CopyButton.tsx
+│   │   │   ├── Sidebar.tsx            # Menu lateral Glass Morphism
+│   │   │   └── Sidebar-NeonGradient.tsx  # Alternativa Neon (backup)
 │   │   ├── pages/              # Páginas da aplicação
 │   │   │   └── Employees.tsx
 │   │   ├── hooks/              # Custom React hooks
@@ -298,6 +316,17 @@ PIXmint-robot/
 
 ## 🎨 Componentes Frontend
 
+### Sidebar
+Menu lateral de navegação com:
+- **2 estilos disponíveis:**
+  - **Glass Morphism** (ativo): transparência com blur, elegante, melhor performance
+  - **Neon Gradient** (backup): gradiente roxo-azul com glow effects
+- Collapse/expand (240px ↔ 60px)
+- Menu items: Home 🏠 e Colaboradores 👥
+- Submenu expansível com toggle (aparece apenas em /employees)
+- Reset automático de estados ao mudar de rota
+- Transições suaves e hover effects
+
 ### EmployeeModal
 Modal completo para criação de employees com:
 - Validação em tempo real (onBlur) em todos os campos
@@ -310,6 +339,7 @@ Modal completo para criação de employees com:
 - Network obrigatória (seleção entre 6 redes)
 - Estados de loading e tratamento de erros do backend
 - Acessibilidade (ARIA labels, Escape key, overlay click)
+- Fecha automaticamente ao mudar de menu
 
 ### EmployeeTable
 Tabela responsiva para exibição de employees com suporte a:
@@ -388,6 +418,30 @@ Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://
 
 ## 📝 Changelog
 
+### v0.7.0 (2024-11-14)
+- ✅ **Submenu Import e sistema de containers:**
+  - Submenu Import no menu Colaboradores (irmão de New)
+  - Container de importação em tela inteira com botão "Download Template"
+  - Sistema de navegação condicional entre containers
+  - Layout vertical 50/50 (tabela + bottom panel)
+  - Nomenclatura padronizada de containers com data-attributes
+  - Containers identificados: `home-main-content`, `colaboradores-main-content`, `colaboradores-import-view`, `colaboradores-bottom-panel`
+- ✅ **Controles de navegação completos:**
+  - Reset automático de modais ao mudar de menu
+  - Container Import esconde outros containers
+  - Clicar em New no Import retorna para tabela e abre modal
+  - Clicar em Colaboradores fecha Import e mostra tabela
+  - Submenu com toggle expansível (clicar em Colaboradores novamente recolhe)
+- ✅ **Estilos de menu (2 opções):**
+  - Glass Morphism (ativo): transparência, blur, elegante, ~5-10% GPU
+  - Neon Gradient (backup): gradiente roxo-azul, glow effects, ~15-20% GPU
+  - Arquivo Sidebar-NeonGradient.tsx preservado como alternativa
+- ✅ **Ajustes de layout:**
+  - Fonte da tabela reduzida para 12px
+  - Paginação alterada para 6 registros
+  - Container bottom sem scroll e padding removido
+  - Separador horizontal entre containers
+
 ### v0.6.0 (2024-11-14)
 - ✅ **Menu lateral (Sidebar) com navegação:**
   - Componente `Sidebar.tsx` fixo à esquerda com collapse/expand
@@ -408,6 +462,7 @@ Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://
   - "Employees" → "Colaboradores"
   - "New Employee" → "Novo Colaborador"
   - "Edit Employee" → "Editar Colaborador"
+  - "Endereço Ethereum válido" → "Endereço EVM válido"
 - ✅ Integração modal com sidebar (estado gerenciado no App.tsx)
 - ✅ Removido header redundante e botão "Novo" da página Employees
 
