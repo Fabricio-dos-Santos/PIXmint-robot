@@ -12,6 +12,7 @@ describe('employee routes (integration)', () => {
       name: 'Integration User',
       pixKey: 'int@pix.com',
       wallet: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+      network: 'sepolia',
     };
 
     const postRes = await request(app)

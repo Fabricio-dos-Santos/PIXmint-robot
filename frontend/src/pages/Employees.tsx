@@ -3,6 +3,7 @@ import useEmployees from '../hooks/useEmployees';
 import styles from '../styles/table.module.css';
 import EmployeeTable from '../components/EmployeeTable';
 import PixKey from '../components/PixKey';
+import EmployeeModal from '../components/EmployeeModal';
 import { isWallet } from '../lib/pixKeyUtils';
 import '../styles/theme.css';
 
@@ -20,7 +21,8 @@ type Employee = {
 export default function Employees() {
   const [filterName, setFilterName] = React.useState('');
   const [searchTerm, setSearchTerm] = React.useState('');
-  const { data, error, isLoading, removeEmployee } = useEmployees(searchTerm);
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const { data, error, isLoading, removeEmployee, createEmployee, isCreating, createError } = useEmployees(searchTerm);
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
@@ -50,6 +52,35 @@ export default function Employees() {
     }
   };
 
+  const handleCreateEmployee = async (formData: any) => {
+    try {
+      await createEmployee(formData);
+      setModalOpen(false);
+    } catch (err) {
+      // Error will be displayed in modal via createError prop
+      throw err;
+    }
+  };
+
+  const getBackendErrors = (): string[] => {
+    if (!createError) return [];
+    
+    const err = createError as any;
+    
+    // Handle ValidationError from backend
+    if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
+      return err.response.data.errors;
+    }
+    
+    // Handle generic error message
+    if (err.response?.data?.message) {
+      return [err.response.data.message];
+    }
+    
+    // Fallback
+    return ['Erro ao criar funcionário. Tente novamente.'];
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading employees</div>;
 
@@ -60,7 +91,7 @@ export default function Employees() {
         <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
           <button
             type="button"
-            onClick={() => { }}
+            onClick={() => setModalOpen(true)}
             style={{
               background: '#2f855a',
               color: 'white',
@@ -73,6 +104,14 @@ export default function Employees() {
             Novo
           </button>
         </div>
+
+        <EmployeeModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleCreateEmployee}
+          isLoading={isCreating}
+          errors={getBackendErrors()}
+        />
 
         {/* Table container with filter inside */}
         <div style={{ 

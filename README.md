@@ -16,7 +16,15 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 - ✅ Listagem de employees com paginação client-side
 - ✅ Busca global integrada com backend (query param `?search=termo`)
 - ✅ Botão de limpar filtro (reset search + refetch)
-- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton)
+- ✅ **Modal de criação de employees com validação completa:**
+  - Validação em tempo real (onBlur) em todos os campos
+  - Máscaras de input: CPF (`000.000.000-00`), Telefone (`(00) 00000-0000`), Wallet (`0x` + hex)
+  - Validação de nome: mínimo 3 letras por palavra, nome + sobrenome obrigatório, sem preposições no final
+  - Validação de PIX: detecção automática de tipo (CPF, telefone, email, random) com regras específicas
+  - Validação de wallet: formato EVM (0x + 40 hex)
+  - Mensagens de erro específicas por campo
+  - Network obrigatória
+- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton, EmployeeModal)
 - ✅ Máscaras inteligentes para pixKey:
   - Email: exibição parcial com domínio preservado
   - CPF: formato `XXX.XX*.***-**`
@@ -27,12 +35,12 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 - ✅ Operação de delete com confirmação
 - ✅ Tema escuro
 - ✅ Cantos arredondados nas tabelas
-- ✅ Testes de hooks e componentes (Vitest + React Testing Library) - 11 testes passando
+- ✅ Testes de hooks e componentes (Vitest + React Testing Library) - **90 testes passando**
 
 ### Funcionalidades Planejadas
 - ⏳ Integração com PIX para geração de QR Code
 - ⏳ Conversão automática para StableCoin
-- ⏳ Modal de criação/edição de employees
+- ⏳ Modal de edição de employees
 
 ## 📋 Pré-requisitos
 
@@ -195,10 +203,12 @@ cd frontend
 npm test
 ```
 
-**Status:** ✅ 3 suites, 11 testes passando
-- Testes de hooks (`useEmployees.test.ts`) - inclui testes da operação de delete e busca global
+**Status:** ✅ 5 suites, 90 testes passando
+- Testes de hooks (`useEmployees.test.ts`) - inclui testes das operações de create, delete e busca global
 - Testes de componentes (`EmployeeTable.test.tsx`)
 - Testes de utils (`pixKeyUtils.test.ts`)
+- Testes de máscaras de input (`inputMasks.test.ts`) - 24 testes
+- Testes de validação de campos (`fieldValidation.test.ts`) - 51 testes
 
 ### Nota sobre Vitest no Windows
 
@@ -247,19 +257,38 @@ PIXmint-robot/
 │   ├── services/               # Lógica de negócio
 │   ├── models/                 # Modelos do Prisma
 │   ├── routes/                 # Definição de rotas
-│   └── index.ts                # Entry point do backend
+│   ├── types/                  # TypeScript types
+│   ├── utils/                  # Utilitários (validation)
+│   └── employee.ts             # Entry point do backend
 ├── frontend/                   # Aplicação React
 │   ├── src/
 │   │   ├── components/         # Componentes reutilizáveis
+│   │   │   ├── EmployeeTable.tsx
+│   │   │   ├── EmployeeModal.tsx      # Modal de criação
+│   │   │   ├── Pagination.tsx
+│   │   │   ├── PixKey.tsx
+│   │   │   └── CopyButton.tsx
 │   │   ├── pages/              # Páginas da aplicação
+│   │   │   └── Employees.tsx
 │   │   ├── hooks/              # Custom React hooks
+│   │   │   └── useEmployees.ts
 │   │   ├── lib/                # Utilitários e configurações
+│   │   │   ├── api.ts
+│   │   │   ├── inputMasks.ts           # Máscaras de input
+│   │   │   ├── fieldValidation.ts      # Validação de campos
+│   │   │   └── pixKeyUtils.ts
 │   │   └── styles/             # CSS modules
+│   │       ├── table.module.css
+│   │       ├── modal.module.css        # Estilos do modal
+│   │       └── theme.css
 │   ├── vitest.config.ts        # Configuração do Vitest
 │   └── package.json
 ├── prisma/                     # Schema e migrations do Prisma
 │   ├── schema.prisma
 │   └── seed.ts                 # Seed do banco de dados
+├── scripts/                    # Scripts PowerShell
+│   ├── run-seed.ps1            # Automação de seed
+│   └── start-dev-bg.ps1        # Background jobs
 ├── tests/                      # Testes do backend
 ├── logs/                       # Logs de dev (background jobs)
 ├── .env.example                # Exemplo de variáveis de ambiente
@@ -268,6 +297,18 @@ PIXmint-robot/
 ```
 
 ## 🎨 Componentes Frontend
+
+### EmployeeModal
+Modal completo para criação de employees com:
+- Validação em tempo real (onBlur) em todos os campos
+- Máscaras de input automáticas (CPF, telefone, wallet)
+- Detecção automática de tipo de PIX key
+- Mensagens de erro específicas por campo
+- Validação robusta de nome (3+ letras/palavra, nome + sobrenome, sem preposições no final)
+- Validação de wallet EVM (0x + 40 hex)
+- Network obrigatória (seleção entre 6 redes)
+- Estados de loading e tratamento de erros do backend
+- Acessibilidade (ARIA labels, Escape key, overlay click)
 
 ### EmployeeTable
 Tabela responsiva para exibição de employees com suporte a:
@@ -345,6 +386,24 @@ Fabricio dos Santos - [@Fabricio-dos-Santos](https://github.com/Fabricio-dos-San
 Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://github.com/Fabricio-dos-Santos/PIXmint-robot)
 
 ## 📝 Changelog
+
+### v0.4.0 (2024-11-14)
+- ✅ **Modal de criação de employees completo:**
+  - Componente `EmployeeModal.tsx` com validação em tempo real
+  - Máscaras de input automáticas (`inputMasks.ts`): CPF, telefone, wallet
+  - Sistema de validação de campos (`fieldValidation.ts`) com mensagens específicas
+  - 24 testes de máscaras de input
+  - 51 testes de validação de campos (nome, PIX, wallet, network)
+- ✅ **Validações robustas:**
+  - Nome: mínimo 3 letras/palavra, nome + sobrenome obrigatório, sem preposições no final (dos, das, de, da, do, e)
+  - PIX: detecção automática de tipo com validações específicas (CPF 11 dígitos, telefone com DDD válido, email com @ e ponto, random 32+ chars)
+  - Wallet: formato EVM (0x + 40 caracteres hexadecimais)
+  - Network: obrigatória
+- ✅ Integração completa: hook `useEmployees` com `createEmployee`, modal integrado na página
+- ✅ Estilos: CSS Module `modal.module.css` com tema escuro consistente
+- ✅ Network obrigatória no backend (tipos e validação atualizados)
+- ✅ Total de 90 testes frontend passando (24 máscaras + 51 validação + 9 hooks + 4 utils + 1 component)
+- ✅ Removida duplicação: `isValidWallet` consolidado em `fieldValidation.ts`
 
 ### v0.3.0 (2024-11-14)
 - ✅ Implementada busca global case-insensitive com query param `?search=termo`

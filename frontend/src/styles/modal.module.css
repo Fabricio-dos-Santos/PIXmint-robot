@@ -1,0 +1,190 @@
+/* Modal overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Modal container */
+.modal {
+  background: #1a2332;
+  border: 1px solid #2b6cb0;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Modal header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #2b6cb0;
+  background: #15466f;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #e6f2ff;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: #e6f2ff;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal body */
+.body {
+  padding: 20px;
+}
+
+/* Form styles */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.required {
+  color: #f87171;
+  margin-left: 2px;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #2b6cb0;
+  border-radius: 4px;
+  background: #0b1220;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #4299e1;
+}
+
+.input::placeholder {
+  color: #6b7280;
+}
+
+.inputError {
+  border-color: #f87171 !important;
+}
+
+.fieldError {
+  display: block;
+  font-size: 12px;
+  color: #fca5a5;
+  margin-top: 4px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Error messages */
+.errorList {
+  margin: 16px 0;
+  padding: 12px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid #f87171;
+  border-radius: 4px;
+}
+
+.errorItem {
+  color: #fca5a5;
+  font-size: 13px;
+  margin: 4px 0;
+  list-style-position: inside;
+}
+
+/* Modal footer */
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid #2b6cb0;
+  background: #15466f;
+}
+
+.button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancelButton {
+  background: #4b5563;
+  color: white;
+}
+
+.cancelButton:hover {
+  background: #6b7280;
+}
+
+.submitButton {
+  background: #2f855a;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #38a169;
+}
+
+.submitButton:disabled {
+  background: #374151;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.loading {
+  opacity: 0.7;
+  cursor: wait;
+}

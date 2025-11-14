@@ -10,6 +10,13 @@ export type Employee = {
   createdAt?: string;
 };
 
+export type CreateEmployeeInput = {
+  name: string;
+  pixKey: string;
+  wallet: string;
+  network: string;
+};
+
 export default function useEmployees(search?: string) {
   const queryClient = useQueryClient();
 
@@ -19,6 +26,16 @@ export default function useEmployees(search?: string) {
       const params = search ? { search } : {};
       const res = await api.get<Employee[]>('/employees', { params });
       return res.data;
+    }
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: CreateEmployeeInput) => {
+      const res = await api.post<Employee>('/employees', data);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
     }
   });
 
@@ -38,12 +55,20 @@ export default function useEmployees(search?: string) {
     return deleteMutation.mutateAsync(id);
   };
 
+  const createEmployee = async (data: CreateEmployeeInput) => {
+    return createMutation.mutateAsync(data);
+  };
+
   return {
     data: query.data,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
     removeEmployee,
-    deleteStatus: deleteMutation.status
+    deleteStatus: deleteMutation.status,
+    createEmployee,
+    createStatus: createMutation.status,
+    createError: createMutation.error,
+    isCreating: createMutation.isPending
   };
 }

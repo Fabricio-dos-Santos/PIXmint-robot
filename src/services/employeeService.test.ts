@@ -18,8 +18,8 @@ describe('employeeService', () => {
   });
 
   test('createEmployee - success', async () => {
-    const input = { name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'a'.repeat(40) };
-  const created = { id: '1', ...input, network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    const input = { name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'a'.repeat(40), network: 'sepolia' as const };
+  const created = { id: '1', ...input, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     employeeModel.create.mockResolvedValue(created);
 
     const res = await employeeService.createEmployee(input);
@@ -29,7 +29,7 @@ describe('employeeService', () => {
   });
 
   test('createEmployee - validation error', async () => {
-    const bad = { name: 'Al', pixKey: '', wallet: 'bad' };
+    const bad = { name: 'Al', pixKey: '', wallet: 'bad', network: 'sepolia' };
     await expect(employeeService.createEmployee(bad as any)).rejects.toMatchObject({ name: 'ValidationError', errors: expect.any(Array) });
     expect(employeeModel.create).not.toHaveBeenCalled();
   });

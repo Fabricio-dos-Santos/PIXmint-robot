@@ -24,11 +24,9 @@ export function validateEmployeeInput({ name, pixKey, wallet, network }: CreateE
   if (!wallet || !isValidWallet(wallet)) {
     errors.push('wallet must be a valid EVM address (0x...)');
   }
-  // network: optional incoming, but if present must be one of allowed networks and not empty
-  if (typeof network !== 'undefined') {
-    if (!network || typeof network !== 'string' || !allowedNetworks.includes(network as Network)) {
-      errors.push(`network must be one of: ${allowedNetworks.join(', ')}`);
-    }
+  // network is now required
+  if (!network || typeof network !== 'string' || !allowedNetworks.includes(network as Network)) {
+    errors.push(`network is required and must be one of: ${allowedNetworks.join(', ')}`);
   }
   return errors;
 }
