@@ -23,18 +23,36 @@ export default function Employees() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [modalOpen, setModalOpen] = React.useState(false);
   const [employeeToEdit, setEmployeeToEdit] = React.useState<ModalEmployee | null>(null);
+  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc' | null>(null);
   const { data, error, isLoading, removeEmployee, createEmployee, isCreating, createError, updateEmployee, isUpdating, updateError } = useEmployees(searchTerm);
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
   const perPage = 8;
-  const list = data || [];
-  const total = list.length;
+  
+  // Apply sorting to the list
+  const sortedList = React.useMemo(() => {
+    const list = data || [];
+    if (!sortOrder) return list;
+    
+    return [...list].sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      
+      if (sortOrder === 'asc') {
+        return nameA.localeCompare(nameB, 'pt-BR');
+      } else {
+        return nameB.localeCompare(nameA, 'pt-BR');
+      }
+    });
+  }, [data, sortOrder]);
+  
+  const total = sortedList.length;
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const currentPage = Math.min(Math.max(1, page), totalPages);
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
-  const pageItems = list.slice(start, end);
+  const pageItems = sortedList.slice(start, end);
 
   const handleSearch = () => {
     setSearchTerm(filterName);
@@ -45,6 +63,17 @@ export default function Employees() {
     setFilterName('');
     setSearchTerm('');
     setPage(1); // Reset to first page
+  };
+
+  const toggleSort = () => {
+    if (sortOrder === null) {
+      setSortOrder('asc');
+    } else if (sortOrder === 'asc') {
+      setSortOrder('desc');
+    } else {
+      setSortOrder(null);
+    }
+    setPage(1); // Reset to first page when sorting changes
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -148,7 +177,7 @@ export default function Employees() {
           {/* Filter input and search button */}
           <div style={{ 
             padding: '12px',
-            background: 'rgba(43, 108, 176, 0.05)',
+            background: '#0b1220',
             display: 'flex', 
             gap: 8, 
             alignItems: 'center',
@@ -217,10 +246,12 @@ export default function Employees() {
             items={pageItems}
             renderPixKey={(val: string | undefined) => <PixKey value={val} showLabel={!isWallet(val)} />}
             onEdit={(id: string) => {
-              const employee = list.find(e => e.id === id);
+              const employee = sortedList.find(e => e.id === id);
               if (employee) handleEdit(employee);
             }}
             onDelete={(id: string) => { removeEmployee(id).catch(() => { }); }}
+            sortOrder={sortOrder}
+            onToggleSort={toggleSort}
           />
         </div>
 

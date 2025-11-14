@@ -18,15 +18,60 @@ type Props = {
   renderPixKey: (val?: string) => React.ReactNode;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  sortOrder?: 'asc' | 'desc' | null;
+  onToggleSort?: () => void;
 };
 
-export default function EmployeeTable({ items, renderPixKey, onEdit, onDelete }: Props) {
+export default function EmployeeTable({ items, renderPixKey, onEdit, onDelete, sortOrder, onToggleSort }: Props) {
   return (
     <div style={{ overflowX: 'auto', display: 'flex', justifyContent: 'center' }}>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={`${styles.cell} ${styles.nowrap}`}>Name</th>
+            <th className={`${styles.cell} ${styles.nowrap}`}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                <span>Name</span>
+                {onToggleSort && (
+                  <button
+                    type="button"
+                    onClick={onToggleSort}
+                    style={{
+                      background: sortOrder ? '#805ad5' : 'rgba(43, 108, 176, 0.05)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '4px 6px',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: sortOrder ? '#ffffff' : '#a0aec0',
+                      transition: 'all 0.2s ease',
+                    }}
+                    title={
+                      sortOrder === null ? 'Ordenar por nome (A-Z)' :
+                      sortOrder === 'asc' ? 'Ordenado A-Z (clique para Z-A)' :
+                      'Ordenado Z-A (clique para remover)'
+                    }
+                    aria-label="Ordenar por nome"
+                  >
+                    {sortOrder === 'asc' && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                    {sortOrder === 'desc' && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                    {sortOrder === null && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 15l5 5 5-5M7 9l5-5 5 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </button>
+                )}
+              </div>
+            </th>
             <th className={`${styles.cell} ${styles.nowrap}`}>PixKey</th>
             <th className={`${styles.cell} ${styles.nowrap}`}>Wallet</th>
             <th className={`${styles.cell} ${styles.nowrap}`}>Network</th>
