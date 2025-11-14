@@ -24,12 +24,22 @@ interface EmployeeFormData {
   network: Network;
 }
 
+export interface Employee {
+  id: string;
+  name: string;
+  pixKey: string;
+  wallet: string;
+  network: Network;
+  createdAt?: string;
+}
+
 interface EmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: EmployeeFormData) => Promise<void>;
   isLoading?: boolean;
   errors?: string[];
+  employeeToEdit?: Employee | null;
 }
 
 const NETWORKS: { value: Network; label: string }[] = [
@@ -46,8 +56,10 @@ export default function EmployeeModal({
   onClose, 
   onSubmit, 
   isLoading = false,
-  errors = []
+  errors = [],
+  employeeToEdit = null
 }: EmployeeModalProps) {
+  const isEditMode = !!employeeToEdit;
   const [formData, setFormData] = useState<EmployeeFormData>({
     name: '',
     pixKey: '',
@@ -69,21 +81,34 @@ export default function EmployeeModal({
 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // Reset form when modal opens
+  // Reset or populate form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        name: '',
-        pixKey: '',
-        wallet: '',
-        network: 'sepolia',
-      });
-      setDisplayPixKey('');
-      setDisplayWallet('');
+      if (employeeToEdit) {
+        // Edit mode: populate with existing data
+        setFormData({
+          name: employeeToEdit.name,
+          pixKey: employeeToEdit.pixKey,
+          wallet: employeeToEdit.wallet,
+          network: employeeToEdit.network,
+        });
+        setDisplayPixKey(formatPixKeyInput(employeeToEdit.pixKey));
+        setDisplayWallet(formatWalletInput(employeeToEdit.wallet));
+      } else {
+        // Create mode: reset form
+        setFormData({
+          name: '',
+          pixKey: '',
+          wallet: '',
+          network: 'sepolia',
+        });
+        setDisplayPixKey('');
+        setDisplayWallet('');
+      }
       setFieldErrors({});
       setValidationErrors([]);
     }
-  }, [isOpen]);
+  }, [isOpen, employeeToEdit]);
 
   // Focus first input when modal opens
   useEffect(() => {
@@ -234,7 +259,9 @@ export default function EmployeeModal({
     >
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h2 id="modal-title" className={styles.title}>Novo Funcionário</h2>
+          <h2 id="modal-title" className={styles.title}>
+            {isEditMode ? 'Editar Funcionário' : 'Novo Funcionário'}
+          </h2>
           <button
             type="button"
             className={styles.closeButton}
@@ -372,7 +399,10 @@ export default function EmployeeModal({
               className={`${styles.button} ${styles.submitButton} ${isLoading ? styles.loading : ''}`}
               disabled={!isFormValid || isLoading}
             >
-              {isLoading ? 'Criando...' : 'Criar'}
+              {isLoading 
+                ? (isEditMode ? 'Salvando...' : 'Criando...') 
+                : (isEditMode ? 'Salvar Alterações' : 'Criar')
+              }
             </button>
           </div>
         </form>

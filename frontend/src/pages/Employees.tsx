@@ -3,7 +3,7 @@ import useEmployees from '../hooks/useEmployees';
 import styles from '../styles/table.module.css';
 import EmployeeTable from '../components/EmployeeTable';
 import PixKey from '../components/PixKey';
-import EmployeeModal from '../components/EmployeeModal';
+import EmployeeModal, { type Employee as ModalEmployee } from '../components/EmployeeModal';
 import { isWallet } from '../lib/pixKeyUtils';
 import '../styles/theme.css';
 
@@ -22,7 +22,8 @@ export default function Employees() {
   const [filterName, setFilterName] = React.useState('');
   const [searchTerm, setSearchTerm] = React.useState('');
   const [modalOpen, setModalOpen] = React.useState(false);
-  const { data, error, isLoading, removeEmployee, createEmployee, isCreating, createError } = useEmployees(searchTerm);
+  const [employeeToEdit, setEmployeeToEdit] = React.useState<ModalEmployee | null>(null);
+  const { data, error, isLoading, removeEmployee, createEmployee, isCreating, createError, updateEmployee, isUpdating, updateError } = useEmployees(searchTerm);
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
@@ -62,10 +63,34 @@ export default function Employees() {
     }
   };
 
-  const getBackendErrors = (): string[] => {
-    if (!createError) return [];
+  const handleUpdateEmployee = async (formData: any) => {
+    if (!employeeToEdit) return;
     
-    const err = createError as any;
+    try {
+      await updateEmployee(employeeToEdit.id, formData);
+      setModalOpen(false);
+      setEmployeeToEdit(null);
+    } catch (err) {
+      // Error will be displayed in modal via updateError prop
+      throw err;
+    }
+  };
+
+  const handleEdit = (employee: Employee) => {
+    setEmployeeToEdit(employee as ModalEmployee);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setEmployeeToEdit(null);
+  };
+
+  const getBackendErrors = (): string[] => {
+    const error = employeeToEdit ? updateError : createError;
+    if (!error) return [];
+    
+    const err = error as any;
     
     // Handle ValidationError from backend
     if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
@@ -78,7 +103,8 @@ export default function Employees() {
     }
     
     // Fallback
-    return ['Erro ao criar funcionário. Tente novamente.'];
+    const action = employeeToEdit ? 'atualizar' : 'criar';
+    return [`Erro ao ${action} funcionário. Tente novamente.`];
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -107,10 +133,11 @@ export default function Employees() {
 
         <EmployeeModal
           isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onSubmit={handleCreateEmployee}
-          isLoading={isCreating}
+          onClose={handleCloseModal}
+          onSubmit={employeeToEdit ? handleUpdateEmployee : handleCreateEmployee}
+          isLoading={employeeToEdit ? isUpdating : isCreating}
           errors={getBackendErrors()}
+          employeeToEdit={employeeToEdit}
         />
 
         {/* Table container with filter inside */}
@@ -189,7 +216,10 @@ export default function Employees() {
           <EmployeeTable
             items={pageItems}
             renderPixKey={(val: string | undefined) => <PixKey value={val} showLabel={!isWallet(val)} />}
-            onEdit={(id: string) => { /* TODO: edit handler */ }}
+            onEdit={(id: string) => {
+              const employee = list.find(e => e.id === id);
+              if (employee) handleEdit(employee);
+            }}
             onDelete={(id: string) => { removeEmployee(id).catch(() => { }); }}
           />
         </div>

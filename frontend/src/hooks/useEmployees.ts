@@ -51,12 +51,26 @@ export default function useEmployees(search?: string) {
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<CreateEmployeeInput> }) => {
+      const res = await api.put<Employee>(`/employees/${id}`, data);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+    }
+  });
+
   const removeEmployee = async (id: string) => {
     return deleteMutation.mutateAsync(id);
   };
 
   const createEmployee = async (data: CreateEmployeeInput) => {
     return createMutation.mutateAsync(data);
+  };
+
+  const updateEmployee = async (id: string, data: Partial<CreateEmployeeInput>) => {
+    return updateMutation.mutateAsync({ id, data });
   };
 
   return {
@@ -69,6 +83,10 @@ export default function useEmployees(search?: string) {
     createEmployee,
     createStatus: createMutation.status,
     createError: createMutation.error,
-    isCreating: createMutation.isPending
+    isCreating: createMutation.isPending,
+    updateEmployee,
+    updateStatus: updateMutation.status,
+    updateError: updateMutation.error,
+    isUpdating: updateMutation.isPending
   };
 }
