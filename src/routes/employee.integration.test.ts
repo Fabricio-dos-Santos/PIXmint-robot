@@ -127,4 +127,150 @@ describe('employee routes (integration)', () => {
       expect(res.body[0].pixKey).toContain('@example');
     });
   });
+
+  describe('update employee (PUT)', () => {
+    it('should update an employee with valid data', async () => {
+      // Create employee
+      const createRes = await request(app).post('/employees').send({
+        name: 'Carlos Pereira',
+        pixKey: 'carlos@example.com',
+        wallet: '0x1234567890abcdef1234567890abcdef12345678',
+        network: 'sepolia',
+      });
+      expect(createRes.status).toBe(201);
+      const employeeId = createRes.body.id;
+
+      // Update employee
+      const updateRes = await request(app)
+        .put(`/employees/${employeeId}`)
+        .send({
+          name: 'Carlos Alberto Pereira',
+          network: 'ethereum',
+        });
+
+      expect(updateRes.status).toBe(200);
+      expect(updateRes.body.name).toBe('Carlos Alberto Pereira');
+      expect(updateRes.body.network).toBe('ethereum');
+      expect(updateRes.body.pixKey).toBe('carlos@example.com'); // unchanged
+      expect(updateRes.body.wallet).toBe('0x1234567890abcdef1234567890abcdef12345678'); // unchanged
+    });
+
+    it('should reject update with invalid name (no surname)', async () => {
+      // Create employee
+      const createRes = await request(app).post('/employees').send({
+        name: 'Diana Costa',
+        pixKey: 'diana@example.com',
+        wallet: '0xabcdef1234567890abcdef1234567890abcdef12',
+        network: 'polygon',
+      });
+      expect(createRes.status).toBe(201);
+      const employeeId = createRes.body.id;
+
+      // Try to update with invalid name (single name, no surname)
+      const updateRes = await request(app)
+        .put(`/employees/${employeeId}`)
+        .send({
+          name: 'Diana', // Invalid: no surname
+        });
+
+      expect(updateRes.status).toBe(400);
+      expect(updateRes.body).toHaveProperty('errors');
+      expect(updateRes.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('first name and last name')
+        ])
+      );
+    });
+
+    it('should reject update with invalid wallet format', async () => {
+      // Create employee
+      const createRes = await request(app).post('/employees').send({
+        name: 'Eduardo Silva',
+        pixKey: 'eduardo@example.com',
+        wallet: '0x1234567890abcdef1234567890abcdef12345678',
+        network: 'arbitrum',
+      });
+      expect(createRes.status).toBe(201);
+      const employeeId = createRes.body.id;
+
+      // Try to update with invalid wallet
+      const updateRes = await request(app)
+        .put(`/employees/${employeeId}`)
+        .send({
+          wallet: '0xinvalid', // Invalid: wrong length
+        });
+
+      expect(updateRes.status).toBe(400);
+      expect(updateRes.body).toHaveProperty('errors');
+      expect(updateRes.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('valid EVM address')
+        ])
+      );
+    });
+
+    it('should reject update with invalid network', async () => {
+      // Create employee
+      const createRes = await request(app).post('/employees').send({
+        name: 'Fernanda Lima',
+        pixKey: 'fernanda@example.com',
+        wallet: '0xfedcba0987654321fedcba0987654321fedcba09',
+        network: 'base',
+      });
+      expect(createRes.status).toBe(201);
+      const employeeId = createRes.body.id;
+
+      // Try to update with invalid network
+      const updateRes = await request(app)
+        .put(`/employees/${employeeId}`)
+        .send({
+          network: 'invalid-network',
+        });
+
+      expect(updateRes.status).toBe(400);
+      expect(updateRes.body).toHaveProperty('errors');
+      expect(updateRes.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('must be one of')
+        ])
+      );
+    });
+
+    it('should reject update with name ending in preposition', async () => {
+      // Create employee
+      const createRes = await request(app).post('/employees').send({
+        name: 'Gabriel Santos',
+        pixKey: 'gabriel@example.com',
+        wallet: '0x1111111111111111111111111111111111111111',
+        network: 'bnb',
+      });
+      expect(createRes.status).toBe(201);
+      const employeeId = createRes.body.id;
+
+      // Try to update with name ending in preposition
+      const updateRes = await request(app)
+        .put(`/employees/${employeeId}`)
+        .send({
+          name: 'Gabriel dos', // Invalid: ends with preposition
+        });
+
+      expect(updateRes.status).toBe(400);
+      expect(updateRes.body).toHaveProperty('errors');
+      expect(updateRes.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('preposition or article')
+        ])
+      );
+    });
+
+    it('should return 404 when updating non-existent employee', async () => {
+      const updateRes = await request(app)
+        .put('/employees/non-existent-id')
+        .send({
+          name: 'Helena Rocha',
+        });
+
+      expect(updateRes.status).toBe(404);
+    });
+  });
 });
