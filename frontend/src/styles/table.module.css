@@ -7,7 +7,7 @@
   border-radius: 8px;
   table-layout: auto;
   margin: 0 auto;
-  font-size: 13px;
+  font-size: 12px;
   overflow: hidden;
 }
 
@@ -15,7 +15,7 @@
   border: 1px solid #2b6cb0;
   border-right: none;
   border-bottom: none;
-  padding: 8px;
+  padding: 6px 8px;
   text-align: left;
 }
 

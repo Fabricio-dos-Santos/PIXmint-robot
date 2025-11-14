@@ -1,13 +1,20 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type SidebarProps = {
   onNewEmployee?: () => void;
+  onImport?: () => void;
+  onColaboradores?: () => void;
 };
 
-export default function Sidebar({ onNewEmployee }: SidebarProps) {
+export default function Sidebar({ onNewEmployee, onImport, onColaboradores }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  
+  // Reset submenu state when clicking on main menu item
+  useEffect(() => {
+    // This will trigger re-render when location changes
+  }, [location.pathname]);
   
   const menuItems = [
     { path: '/', label: 'Home', icon: '🏠' },
@@ -59,6 +66,11 @@ export default function Sidebar({ onNewEmployee }: SidebarProps) {
           <div key={item.path}>
             <Link
               to={item.path}
+              onClick={() => {
+                if (item.path === '/employees' && onColaboradores) {
+                  onColaboradores();
+                }
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -87,34 +99,67 @@ export default function Sidebar({ onNewEmployee }: SidebarProps) {
             
             {/* Submenu for Employees */}
             {item.hasAction && location.pathname === item.path && !collapsed && (
-              <button
-                onClick={onNewEmployee}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 20px 8px 52px',
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#a0aec0',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  transition: 'all 0.2s ease',
-                  textAlign: 'left',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(21, 70, 111, 0.2)';
-                  e.currentTarget.style.color = '#fff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#a0aec0';
-                }}
-              >
-                <span style={{ fontSize: '16px' }}>+</span>
-                <span>New</span>
-              </button>
+              <>
+                <button
+                  onClick={onNewEmployee}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px 8px 52px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#a0aec0',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    transition: 'all 0.2s ease',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(21, 70, 111, 0.2)';
+                    e.currentTarget.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#a0aec0';
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>+</span>
+                  <span>New</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    if (onImport) onImport();
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 20px 8px 52px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#a0aec0',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    transition: 'all 0.2s ease',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(21, 70, 111, 0.2)';
+                    e.currentTarget.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#a0aec0';
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>📥</span>
+                  <span>Import</span>
+                </button>
+              </>
             )}
           </div>
         ))}

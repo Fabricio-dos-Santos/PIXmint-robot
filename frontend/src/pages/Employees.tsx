@@ -33,7 +33,7 @@ export default function Employees({ externalModalOpen, onCloseExternalModal }: E
 
   // simple client-side pagination (presentation-only)
   const [page, setPage] = React.useState(1);
-  const perPage = 8;
+  const perPage = 6;
   
   // Apply sorting to the list
   const sortedList = React.useMemo(() => {

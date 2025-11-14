@@ -343,7 +343,7 @@ export default function EmployeeModal({
                 <span className={styles.fieldError}>{fieldErrors.wallet}</span>
               ) : (
                 <span className={styles.hint}>
-                  Endereço Ethereum válido (0x + 40 caracteres hexadecimais)
+                  Endereço EVM válido (0x + 40 caracteres hexadecimais)
                 </span>
               )}
             </div>
