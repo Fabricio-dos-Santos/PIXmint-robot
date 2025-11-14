@@ -18,7 +18,7 @@ describe('employeeService', () => {
   });
 
   test('createEmployee - success', async () => {
-    const input = { name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'a'.repeat(40), network: 'sepolia' as const };
+    const input = { name: 'Alice Silva', pixKey: 'pix123', wallet: '0x' + 'a'.repeat(40), network: 'sepolia' as const };
   const created = { id: '1', ...input, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     employeeModel.create.mockResolvedValue(created);
 
@@ -40,21 +40,21 @@ describe('employeeService', () => {
   });
 
   test('listEmployees - returns array', async () => {
-  const list = [{ id: '1', name: 'A', pixKey: 'p', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }];
+  const list = [{ id: '1', name: 'Ana Silva', pixKey: 'p', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }];
     employeeModel.findAll.mockResolvedValue(list);
     const res = await employeeService.listEmployees();
     expect(res).toEqual(list);
   });
 
   test('updateEmployee - success', async () => {
-  const existing = { id: '1', name: 'Alice', pixKey: 'pix123', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  const existing = { id: '1', name: 'Alice Silva', pixKey: 'pix123', wallet: '0x' + 'b'.repeat(40), network: 'sepolia', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     employeeModel.findById.mockResolvedValue(existing);
-  const updated = { ...existing, name: 'Bob' };
+  const updated = { ...existing, name: 'Bob Santos' };
   employeeModel.update.mockResolvedValue(updated);
 
-  const res = await employeeService.updateEmployee('1', { name: 'Bob' });
+  const res = await employeeService.updateEmployee('1', { name: 'Bob Santos' });
 
-  expect(employeeModel.update).toHaveBeenCalledWith('1', { name: 'Bob' });
+  expect(employeeModel.update).toHaveBeenCalledWith('1', { name: 'Bob Santos' });
     expect(res).toEqual(updated);
   });
 

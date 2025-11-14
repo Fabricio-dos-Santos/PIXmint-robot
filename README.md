@@ -19,9 +19,9 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 - ✅ **Modal de criação de employees com validação completa:**
   - Validação em tempo real (onBlur) em todos os campos
   - Máscaras de input: CPF (`000.000.000-00`), Telefone (`(00) 00000-0000`), Wallet (`0x` + hex)
-  - Validação de nome: mínimo 3 letras por palavra, nome + sobrenome obrigatório, sem preposições no final
-  - Validação de PIX: detecção automática de tipo (CPF, telefone, email, random) com regras específicas
-  - Validação de wallet: formato EVM (0x + 40 hex)
+  - **Separação de responsabilidades:** Frontend valida UX básica, backend valida regras de negócio
+  - **Validação de negócio (backend):** Nome com sobrenome, sem preposições no final, PIX por tipo
+  - Detecção automática de tipo de PIX (CPF, telefone, email, random)
   - Mensagens de erro específicas por campo
   - Network obrigatória
 - ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton, EmployeeModal)
@@ -35,7 +35,7 @@ dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe 
 - ✅ Operação de delete com confirmação
 - ✅ Tema escuro
 - ✅ Cantos arredondados nas tabelas
-- ✅ Testes de hooks e componentes (Vitest + React Testing Library) - **90 testes passando**
+- ✅ Testes de hooks e componentes (Vitest + React Testing Library) - **53 testes passando**
 
 ### Funcionalidades Planejadas
 - ⏳ Integração com PIX para geração de QR Code
@@ -203,12 +203,12 @@ cd frontend
 npm test
 ```
 
-**Status:** ✅ 5 suites, 90 testes passando
-- Testes de hooks (`useEmployees.test.ts`) - inclui testes das operações de create, delete e busca global
-- Testes de componentes (`EmployeeTable.test.tsx`)
-- Testes de utils (`pixKeyUtils.test.ts`)
-- Testes de máscaras de input (`inputMasks.test.ts`) - 24 testes
-- Testes de validação de campos (`fieldValidation.test.ts`) - 51 testes
+**Status:** ✅ 5 suites, 53 testes passando
+- ✅ Testes de hooks (`useEmployees.test.ts`) - inclui testes das operações de create, delete e busca global
+- ✅ Testes de componentes (`EmployeeTable.test.tsx`)
+- ✅ Testes de utils (`pixKeyUtils.test.ts`)
+- ✅ Testes de máscaras de input (`inputMasks.test.ts`) - 24 testes
+- ✅ Testes de validação de campos (`fieldValidation.test.ts`) - 15 testes (validação de UX)
 
 ### Nota sobre Vitest no Windows
 
@@ -303,9 +303,10 @@ Modal completo para criação de employees com:
 - Validação em tempo real (onBlur) em todos os campos
 - Máscaras de input automáticas (CPF, telefone, wallet)
 - Detecção automática de tipo de PIX key
+- **Separação de responsabilidades:**
+  - Frontend: validação de UX (required, formato básico)
+  - Backend: validação de negócio (sobrenome obrigatório, PIX por tipo, etc.)
 - Mensagens de erro específicas por campo
-- Validação robusta de nome (3+ letras/palavra, nome + sobrenome, sem preposições no final)
-- Validação de wallet EVM (0x + 40 hex)
 - Network obrigatória (seleção entre 6 redes)
 - Estados de loading e tratamento de erros do backend
 - Acessibilidade (ARIA labels, Escape key, overlay click)
@@ -386,6 +387,19 @@ Fabricio dos Santos - [@Fabricio-dos-Santos](https://github.com/Fabricio-dos-San
 Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://github.com/Fabricio-dos-Santos/PIXmint-robot)
 
 ## 📝 Changelog
+
+### v0.5.0 (2024-11-14)
+- ✅ **Separação de validação frontend/backend:**
+  - Frontend (`fieldValidation.ts`): validação de UX apenas (required, formato básico)
+  - Backend (`validation.ts`): validação de negócio completa (fonte única da verdade)
+- ✅ **Backend como autoridade:**
+  - Nome: sobrenome obrigatório, sem preposições no final, 3+ letras/palavra
+  - PIX Key: validação básica (não vazio) - formato detalhado pode ser adicionado
+  - Wallet: formato EVM (0x + 40 hex)
+  - Network: lista de redes permitidas
+- ✅ Eliminada duplicação de regras de negócio entre camadas
+- ✅ Frontend simplificado: 53 testes (redução de ~40% nos testes)
+- ✅ Backend fortalecido: 19 testes (validação de negócio robusta)
 
 ### v0.4.0 (2024-11-14)
 - ✅ **Modal de criação de employees completo:**
