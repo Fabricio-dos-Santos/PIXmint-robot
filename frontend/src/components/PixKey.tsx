@@ -21,8 +21,6 @@ type Props = { value?: string; showLabel?: boolean };
 export default function PixKey({ value, showLabel = true }: Props) {
   if (!value) return null;
 
-  const styleBadge: React.CSSProperties = { marginLeft: 8, padding: '2px 6px', borderRadius: 4, fontSize: 12 };
-
   const labelInfo = () => {
     if (isEmail(value)) return { label: 'email', color: '#2b6cb0', text: maskEmail(value) };
     if (isPhone(value)) return { label: 'telefone', color: '#2f855a', text: maskPhone(value) };
@@ -37,7 +35,7 @@ export default function PixKey({ value, showLabel = true }: Props) {
     <div style={{ display: 'flex', alignItems: 'center' }} title={value}>
       <CopyButton text={value} />
       <span style={{ maxWidth: 420, display: 'inline-block', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: 4 }}>{info.text}</span>
-      {showLabel && <span style={{ marginLeft: 8, fontSize: 12, color: info.color }}>{info.label}</span>}
+      {showLabel ? <span style={{ marginLeft: 8, fontSize: 12, color: info.color }}>{info.label}</span> : null}
     </div>
   );
 }

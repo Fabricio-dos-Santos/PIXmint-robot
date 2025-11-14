@@ -1,152 +1,41 @@
 # PIXmint-robot
 
-dApp onde você paga seus funcionários fazendo um PIX, e o funcionario recebe na StableCoin de sua preferencia.
-
-## 🚀 Funcionalidades
-
-- Geração de QR Code para pagamentos PIX
-- Conversão automática para StableCoin
-- Interface simples e intuitiva
-- Confirmação em tempo real
-
-## 📋 Pré-requisitos
-
-- Node.js >= 16
-- npm ou yarn
-- Docker (opcional)
-
-## 🔧 Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/Fabricio-dos-Santos/PIXmint-robot.git
-cd PIXmint-robot
-```
-
-2. Instale as dependências:
-```bash
-npm install
-```
-
-3. Configure as variáveis de ambiente:
-```bash
-cp .env.example .env
-# Edite o arquivo .env com suas configurações
-```
-
-## 💻 Execução Local
-
-Para desenvolvimento (com hot-reload):
-```bash
-npm run dev
-```
-
-Para produção:
-```bash
-npm start
-```
-
-O servidor estará disponível em `http://localhost:3000`
-
--### Desenvolvimento (dicas)
-
-- O script `npm run dev` usa `nodemon`/`ts-node` para reiniciar automaticamente quando arquivos em `src/` ou `openapi.json` mudarem.
-- Para editar variáveis de ambiente, copie `.env.example` para `.env` e não comite o `.env`.
-- A documentação interativa (Swagger) fica disponível enquanto o servidor roda em:
-  - http://localhost:3000/docs
-
-Exemplo rápido:
-```bash
-copy .env.example .env
-npm install
-npm run dev
-# abra http://localhost:3000/docs no navegador
-```
-
-## 🐳 Usando Docker
-
-1. Construa a imagem:
-```bash
-docker build -t pixmint-robot .
-```
-
-2. Execute o container:
-```bash
-docker run -p 3000:3000 --env-file .env pixmint-robot
-```
-
-## 📚 API Documentation
-
-### Endpoints
-
-#### POST /pix/generate
-````markdown
-# PIXmint-robot
-
-dApp onde você paga seus funcionários fazendo um PIX, e o funcionario recebe na StableCoin de sua preferencia.
-
-## 🚀 Funcionalidades
-
-- Geração de QR Code para pagamentos PIX
-- Conversão automática para StableCoin
-- Interface simples e intuitiva
-- Confirmação em tempo real
-
-## 📋 Pré-requisitos
-
-- Node.js >= 16
-- npm ou yarn
-- Docker (opcional)
-
-## 🔧 Instalação
-
-1. Clone o repositório:
-```powershell
-git clone https://github.com/Fabricio-dos-Santos/PIXmint-robot.git
-cd PIXmint-robot
-```
-
-2. Instale as dependências (raiz e frontend):
-```powershell
-npm install
-cd frontend; npm install
-```
-
-3. Configure as variáveis de ambiente:
-```powershell
-copy .env.example .env
-# Edite o arquivo .env com suas configurações
-```
-
-## 💻 Execução Local
-
-Executar apenas o backend (dev):
-```powershell
-npm run dev
-```
-
-Executar apenas o frontend (dev):
-```powershell
-cd frontend
-npm run dev
-```
-
-Executar backend + frontend (duas opções):
-
-# PIXmint-robot
-
 dApp onde você paga seus funcionários fazendo um PIX, e o funcionário recebe na StableCoin de sua preferência.
 
 ## 🚀 Funcionalidades
 
-- Geração de QR Code para pagamentos PIX
-- Conversão automática para StableCoin
-- Interface simples e intuitiva
-- Confirmação em tempo real
+### Backend
+- ✅ CRUD completo de employees (GET, POST, PUT, DELETE)
+- ✅ Validação de pixKey (email, telefone, CPF, wallet, random)
+- ✅ Seed automático do banco de dados
+- ✅ Documentação Swagger/OpenAPI
+- ✅ Testes unitários e de integração (Jest)
+
+### Frontend
+- ✅ Listagem de employees com paginação client-side
+- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton)
+- ✅ Máscaras inteligentes para pixKey:
+  - Email: exibição parcial com domínio preservado
+  - CPF: formato `XXX.XX*.***-**`
+  - Telefone: formato `(XX) XXXXX-XXXX`
+  - Wallet: `0x12345...12345` (primeiros 5 + últimos 5, preservando prefixo `0x`)
+  - Random: primeiros 5 + últimos 5 caracteres
+- ✅ Botão de copiar para cada pixKey
+- ✅ Campo de filtro por nome (UI implementada)
+- ✅ Operação de delete com confirmação
+- ✅ Tema escuro
+- ✅ Cantos arredondados nas tabelas
+- ✅ Testes de hooks e componentes (Vitest + React Testing Library)
+
+### Funcionalidades Planejadas
+- ⏳ Integração com PIX para geração de QR Code
+- ⏳ Conversão automática para StableCoin
+- ⏳ Modal de criação/edição de employees
+- ⏳ Aplicação do filtro de nome na listagem
 
 ## 📋 Pré-requisitos
 
-- Node.js >= 16
+- Node.js >= 18 (recomendado para melhor compatibilidade com Vitest)
 - npm ou yarn
 - Docker (opcional)
 
@@ -163,7 +52,9 @@ cd PIXmint-robot
 
 ```powershell
 npm install
-cd frontend; npm install
+cd frontend
+npm install
+cd ..
 ```
 
 3. Configure as variáveis de ambiente:
@@ -173,39 +64,45 @@ copy .env.example .env
 # Edite o arquivo .env com suas configurações
 ```
 
+4. Popule o banco de dados (seed):
+
+```powershell
+npm run seed
+```
+
 ## 💻 Execução Local
 
-Executar apenas o backend (dev):
+### Executar apenas o backend (dev):
 
 ```powershell
 npm run dev
 ```
 
-Executar apenas o frontend (dev):
+### Executar apenas o frontend (dev):
 
 ```powershell
 cd frontend
 npm run dev
 ```
 
-Executar backend + frontend (duas opções):
+### Executar backend + frontend simultaneamente:
 
-- Abrir o backend e o frontend em janelas PowerShell separadas:
+**Opção 1:** Abrir em janelas PowerShell separadas:
 
 ```powershell
 npm run dev:all
 ```
 
-- Rodar ambos como jobs em background e ver os logs no mesmo terminal (PowerShell):
+**Opção 2:** Rodar ambos como jobs em background e ver os logs no mesmo terminal (PowerShell):
 
 ```powershell
 npm run dev:all:bg
 ```
 
-Após iniciar, as URLs padrão são:
+### URLs padrão:
 
-- Frontend: http://localhost:5173
-- Backend API / Swagger: http://localhost:3000 (docs em /docs)
+- **Frontend:** http://localhost:5173
+- **Backend API / Swagger:** http://localhost:3000 (documentação em `/docs`)
 
 ### Logs e jobs (PowerShell)
 
@@ -214,14 +111,14 @@ Os logs são escritos em `logs/backend.log` e `logs/frontend.log` quando você u
 Ver os últimos 200 linhas:
 
 ```powershell
-Get-Content logs\\backend.log -Tail 200
-Get-Content logs\\frontend.log -Tail 200
+Get-Content logs\backend.log -Tail 200
+Get-Content logs\frontend.log -Tail 200
 ```
 
 Fazer tail (stream) combinado:
 
 ```powershell
-Get-Content logs\\backend.log,logs\\frontend.log -Wait -Tail 10
+Get-Content logs\backend.log,logs\frontend.log -Wait -Tail 10
 ```
 
 Listar jobs do PowerShell:
@@ -253,108 +150,215 @@ docker run -p 3000:3000 --env-file .env pixmint-robot
 
 ## 📚 API Documentation
 
-### Endpoints (exemplo)
+A documentação completa da API está disponível em `/docs` (Swagger UI) quando o servidor está rodando.
 
-#### POST /pix/generate
-Gera um QR Code PIX para pagamento.
+### Endpoints Principais
 
-**Request:**
+#### Employees
 
-```json
-{
-  "value": "100.00",
-  "description": "Pagamento PIX"
-}
-```
+- **GET /employees** - Lista todos os employees
+- **GET /employees/:id** - Busca um employee por ID
+- **POST /employees** - Cria um novo employee
+- **PUT /employees/:id** - Atualiza um employee existente
+- **DELETE /employees/:id** - Remove um employee
 
-**Response:**
+**Exemplo de Request (POST /employees):**
 
 ```json
 {
-  "qrcode": "string",
-  "expiration": "timestamp"
-}
-```
-
-#### GET /pix/status/:id
-Verifica o status de um pagamento.
-
-**Response:**
-
-```json
-{
-  "status": "pending|completed|failed",
-  "transaction": {
-    "id": "string",
-    "value": "100.00",
-    "timestamp": "datetime"
-  }
+  "name": "João Silva",
+  "pixKey": "joao@example.com",
+  "wallet": "0x1234567890abcdef1234567890abcdef12345678",
+  "network": "sepolia"
 }
 ```
 
 ## 🧪 Testes
 
-Backend tests (Jest):
+### Backend (Jest)
 
 ```powershell
 npm test
 ```
 
-Frontend tests (Vitest):
+**Status:** ✅ 3 suites, 9 testes passando
+- Testes de serviços (`employeeService.test.ts`)
+- Testes de modelos (`employee.test.ts`)
+- Testes de integração (`employee.integration.test.ts`)
+
+### Frontend (Vitest)
 
 ```powershell
 cd frontend
 npm test
 ```
 
-Nota sobre Vitest no Windows
+**Status:** ✅ 3 suites, 9 testes passando
+- Testes de hooks (`useEmployees.test.ts`) - inclui testes da operação de delete
+- Testes de componentes (`EmployeeTable.test.tsx`)
+- Testes de utils (`pixKeyUtils.test.ts`)
+
+### Nota sobre Vitest no Windows
 
 - Se você observar mensagens do tipo "Timeout starting forks runner" em ambientes Windows, há duas opções razoáveis:
   1. Usar execução em processo único — há um arquivo `frontend/vitest.config.ts` (local) que define `threads: false`, `isolate: false` e desabilita o pool de forks para reduzir flakiness no Windows.
   2. Executar os testes no CI (por exemplo, GitHub Actions) com Node 18 — ambientes limpos do CI normalmente não reproduzem esse problema.
 
-Como reverter uma instalação automática indesejada (ex.: quando `npx vitest` sugeriu instalar `jsdom` e o npm alterou `node_modules`/`package-lock.json` no diretório raiz):
+### Como reverter uma instalação automática indesejada
 
-1. Do diretório raiz do repositório, remova o diretório `node_modules` e o arquivo `package-lock.json` que foram criados/alterados:
+Se `npx vitest` ou outro comando instalou pacotes inesperados e alterou `node_modules`/`package-lock.json`:
+
+1. Do diretório raiz do repositório, remova o diretório `node_modules` e o arquivo `package-lock.json`:
 
 ```powershell
 Remove-Item -Recurse -Force node_modules
 Remove-Item -Force package-lock.json
 ```
 
-2. Reinstale apenas as dependências listadas em `package.json` (isso recriará `node_modules` e `package-lock.json` coerentes com `package.json`):
+2. Reinstale apenas as dependências listadas em `package.json`:
 
 ```powershell
 npm install
 ```
 
-3. Se você também quer garantir que o `frontend/` esteja consistente, faça o mesmo dentro de `frontend` (opcional):
+3. Se necessário, faça o mesmo no `frontend`:
 
 ```powershell
 cd frontend
 Remove-Item -Recurse -Force node_modules
 Remove-Item -Force package-lock.json
 npm install
+cd ..
 ```
 
-Isso remove quaisquer pacotes instalados fora das dependências listadas nos respectivos `package.json` e restaura um estado limpo.
+### Observação sobre Node.js
 
-Observação sobre Node.js
+- Recomendamos usar **Node 18.x** para rodar os testes localmente (especialmente Vitest no Windows). 
+- Há um arquivo `.nvmrc` em `frontend/` e os `engines` no `package.json` foram atualizados para indicar `>=18 <19`.
 
-- Recomendamos usar Node 18.x para rodar os testes localmente (especialmente Vitest no Windows). Há um arquivo `.nvmrc` em `frontend/` e os `engines` no `package.json` foram atualizados para indicar `>=18 <19`.
+## 🏗️ Estrutura do Projeto
+
+```
+PIXmint-robot/
+├── src/                        # Código-fonte do backend
+│   ├── controllers/            # Controllers da API
+│   ├── services/               # Lógica de negócio
+│   ├── models/                 # Modelos do Prisma
+│   ├── routes/                 # Definição de rotas
+│   └── index.ts                # Entry point do backend
+├── frontend/                   # Aplicação React
+│   ├── src/
+│   │   ├── components/         # Componentes reutilizáveis
+│   │   ├── pages/              # Páginas da aplicação
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── lib/                # Utilitários e configurações
+│   │   └── styles/             # CSS modules
+│   ├── vitest.config.ts        # Configuração do Vitest
+│   └── package.json
+├── prisma/                     # Schema e migrations do Prisma
+│   ├── schema.prisma
+│   └── seed.ts                 # Seed do banco de dados
+├── tests/                      # Testes do backend
+├── logs/                       # Logs de dev (background jobs)
+├── .env.example                # Exemplo de variáveis de ambiente
+├── package.json                # Dependências do backend
+└── README.md                   # Este arquivo
+```
+
+## 🎨 Componentes Frontend
+
+### EmployeeTable
+Tabela responsiva para exibição de employees com suporte a:
+- Máscaras de pixKey inteligentes
+- Botões de ação (editar/excluir)
+- Render customizado de células
+
+### Pagination
+Componente de paginação client-side com:
+- Navegação (primeira, anterior, próxima, última página)
+- Resumo de registros exibidos
+- Botões desabilitados conforme contexto
+
+### PixKey
+Componente para exibição de pixKey com:
+- Detecção automática do tipo (email, CPF, telefone, wallet, random)
+- Máscaras específicas por tipo
+- Label colorido indicando o tipo
+- Botão de copiar integrado
+
+### CopyButton
+Botão de copiar valor para área de transferência com:
+- Feedback visual ao copiar
+- Ícone SVG inline
+- Acessibilidade (aria-label)
+
+## 🔧 Tecnologias
+
+### Backend
+- **Node.js** + **TypeScript**
+- **Express** - Framework web
+- **Prisma** - ORM para SQLite
+- **Swagger** - Documentação de API
+- **Jest** - Framework de testes
+- **dotenv** - Gerenciamento de variáveis de ambiente
+
+### Frontend
+- **React 18** - Biblioteca UI
+- **Vite 7** - Build tool e dev server
+- **TypeScript** - Tipagem estática
+- **TanStack Query v5** (React Query) - Data fetching e cache
+- **Axios** - Cliente HTTP
+- **CSS Modules** - Estilos isolados
+- **Vitest v4** - Framework de testes
+- **React Testing Library** - Testes de componentes
 
 ## 🤝 Contribuindo
 
 1. Fork o projeto
 2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+3. Commit suas mudanças (`git commit -m 'feat: add some amazing feature'`)
 4. Push para a Branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
+
+### Convenção de Commits
+
+Usamos [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` Nova funcionalidade
+- `fix:` Correção de bug
+- `docs:` Documentação
+- `style:` Formatação, ponto e vírgula, etc
+- `refactor:` Refatoração de código
+- `test:` Adição ou correção de testes
+- `chore:` Atualização de dependências, config, etc
 
 ## 📜 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## Implementation status
+## 📞 Contato
 
-Mantemos um status de implementação em `docs/IMPLEMENTATION_STATUS.md` que lista funcionalidades implementadas e trabalho restante.
+Fabricio dos Santos - [@Fabricio-dos-Santos](https://github.com/Fabricio-dos-Santos)
+
+Link do Projeto: [https://github.com/Fabricio-dos-Santos/PIXmint-robot](https://github.com/Fabricio-dos-Santos/PIXmint-robot)
+
+## 📝 Changelog
+
+### v0.2.0 (2024-11-14)
+- ✅ Implementado CRUD completo de employees no backend
+- ✅ Criado frontend com React + Vite + TypeScript
+- ✅ Componentes reutilizáveis (EmployeeTable, Pagination, PixKey, CopyButton)
+- ✅ Máscaras inteligentes para pixKey
+- ✅ Paginação client-side
+- ✅ Campo de filtro (UI)
+- ✅ Operação de delete com testes
+- ✅ Tema escuro
+- ✅ Testes backend (Jest) e frontend (Vitest)
+- ✅ Seed automático do banco de dados
+- ✅ Documentação completa atualizada
+
+### v0.1.0 (Inicial)
+- ✅ Setup inicial do projeto
+- ✅ Configuração do backend com Express + TypeScript
+- ✅ Configuração do Prisma com SQLite
+- ✅ Documentação Swagger
