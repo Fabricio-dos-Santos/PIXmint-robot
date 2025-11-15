@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { maskWallet, isWallet, isEmail, maskEmail, isCPF, maskCPFDisplay } from '../pixKeyUtils';
+import { maskWallet, isWallet, isEmail, maskEmail, isCPF, maskCPFDisplay, isCNPJ, maskCNPJDisplay } from '../pixKeyUtils';
 
 describe('pixKeyUtils', () => {
   it('maskWallet preserves 0x and shows 5...5', () => {
@@ -24,6 +24,18 @@ describe('pixKeyUtils', () => {
   it('isCPF and maskCPFDisplay work', () => {
     const cpf = '12345678909';
     expect(isCPF(cpf)).toBe(true);
+    expect(isCPF('123.456.789-09')).toBe(true); // with formatting
+    expect(isCPF('1234567890')).toBe(false); // 10 digits
+    expect(isCPF('123456789012')).toBe(false); // 12 digits
     expect(maskCPFDisplay(cpf)).toBe('123.***.***-09');
+  });
+
+  it('isCNPJ and maskCNPJDisplay work', () => {
+    const cnpj = '12345678000190';
+    expect(isCNPJ(cnpj)).toBe(true);
+    expect(isCNPJ('12.345.678/0001-90')).toBe(true); // with formatting
+    expect(isCNPJ('12345678900')).toBe(false); // 11 digits (CPF length)
+    expect(isCNPJ('123456789012345')).toBe(false); // 15 digits
+    expect(maskCNPJDisplay(cnpj)).toBe('12.***.***/****-90');
   });
 });

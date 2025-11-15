@@ -67,6 +67,9 @@ export default function EmployeeModal({
     network: 'sepolia',
   });
 
+  // Track original data for edit mode
+  const [originalData, setOriginalData] = useState<EmployeeFormData | null>(null);
+
   // Display values (formatted)
   const [displayPixKey, setDisplayPixKey] = useState('');
   const [displayWallet, setDisplayWallet] = useState('');
@@ -86,12 +89,14 @@ export default function EmployeeModal({
     if (isOpen) {
       if (employeeToEdit) {
         // Edit mode: populate with existing data
-        setFormData({
+        const editData = {
           name: employeeToEdit.name,
           pixKey: employeeToEdit.pixKey,
           wallet: employeeToEdit.wallet,
           network: employeeToEdit.network,
-        });
+        };
+        setFormData(editData);
+        setOriginalData(editData);
         setDisplayPixKey(formatPixKeyInput(employeeToEdit.pixKey));
         setDisplayWallet(formatWalletInput(employeeToEdit.wallet));
       } else {
@@ -102,6 +107,7 @@ export default function EmployeeModal({
           wallet: '',
           network: 'sepolia',
         });
+        setOriginalData(null);
         setDisplayPixKey('');
         setDisplayWallet('');
       }
@@ -242,6 +248,13 @@ export default function EmployeeModal({
 
   if (!isOpen) return null;
 
+  const hasChanges = isEditMode && originalData
+    ? formData.name !== originalData.name ||
+      formData.pixKey !== originalData.pixKey ||
+      formData.wallet !== originalData.wallet ||
+      formData.network !== originalData.network
+    : true;
+
   const allErrors = [...validationErrors, ...errors];
   const isFormValid = validateName(formData.name).isValid && 
                      validatePixKey(formData.pixKey).isValid && 
@@ -317,9 +330,24 @@ export default function EmployeeModal({
               {fieldErrors.pixKey ? (
                 <span className={styles.fieldError}>{fieldErrors.pixKey}</span>
               ) : (
-                <span className={styles.hint}>
-                  Pode ser email, CPF (000.000.000-00), telefone (00) 00000-0000 ou chave aleatória
-                </span>
+                <div className={styles.pixKeyHintContainer}>
+                  <div className={styles.pixKeyHintIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                  </div>
+                  <div className={styles.pixKeyHintText}>
+                    <strong>Tipos aceitos:</strong>
+                    <div className={styles.pixKeyExamples}>
+                      <span>📧 Email: usuario@exemplo.com</span>
+                      <span>📱 Telefone: (11) 98765-4321</span>
+                      <span>🆔 CPF: 123.456.789-09</span>
+                      <span>🏢 CNPJ: 12.345.678/0001-90</span>
+                      <span>🔑 Aleatória: 32 caracteres hex</span>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -391,18 +419,30 @@ export default function EmployeeModal({
               className={`${styles.button} ${styles.cancelButton}`}
               onClick={onClose}
               disabled={isLoading}
+              title="Cancelar"
             >
-              Cancelar
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
             <button
               type="submit"
               className={`${styles.button} ${styles.submitButton} ${isLoading ? styles.loading : ''}`}
-              disabled={!isFormValid || isLoading}
+              disabled={!isFormValid || isLoading || !hasChanges}
+              title="Salvar Alterações"
             >
-              {isLoading 
-                ? (isEditMode ? 'Salvando...' : 'Criando...') 
-                : (isEditMode ? 'Salvar Alterações' : 'Criar')
-              }
+              {isLoading ? (
+                <svg className={styles.spinner} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="17 21 17 13 7 13 7 21" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="7 3 7 8 15 8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
             </button>
           </div>
         </form>

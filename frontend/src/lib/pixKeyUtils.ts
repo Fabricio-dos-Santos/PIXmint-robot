@@ -47,6 +47,21 @@ export const maskCPFDisplay = (val = '') => {
   return `${first3}.***.***-${last2}`;
 };
 
+// CNPJ helpers (display mask: show first 2 and last 2)
+export const isCNPJ = (val?: string) => {
+  if (!val) return false;
+  const d = onlyDigits(val);
+  return d.length === 14;
+};
+
+export const maskCNPJDisplay = (val = '') => {
+  const d = onlyDigits(val);
+  if (d.length !== 14) return '**.***.***/****-**';
+  const first2 = d.slice(0, 2);
+  const last2 = d.slice(12, 14);
+  return `${first2}.***.***/****-${last2}`;
+};
+
 // Phone masking
 export const maskPhone = (val = '') => {
   const d = onlyDigits(val);
@@ -78,4 +93,6 @@ export default {
   maskEmail,
   isCPF,
   maskCPFDisplay,
+  isCNPJ,
+  maskCNPJDisplay,
 };

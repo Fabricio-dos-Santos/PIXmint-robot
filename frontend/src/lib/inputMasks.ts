@@ -13,6 +13,16 @@ export const formatCPFInput = (value: string): string => {
   return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
 };
 
+// CNPJ Input Mask: 00.000.000/0000-00
+export const formatCNPJInput = (value: string): string => {
+  const digits = onlyDigits(value);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  if (digits.length <= 12) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12, 14)}`;
+};
+
 // Phone Input Mask: (00) 00000-0000 or (00) 0000-0000
 export const formatPhoneInput = (value: string): string => {
   const digits = onlyDigits(value);
@@ -52,7 +62,7 @@ export const formatWalletInput = (value: string): string => {
 };
 
 // Detect PIX key type
-export const detectPixKeyType = (value: string): 'cpf' | 'phone' | 'email' | 'random' => {
+export const detectPixKeyType = (value: string): 'cpf' | 'cnpj' | 'phone' | 'email' | 'random' => {
   const digits = onlyDigits(value);
   
   // Check email pattern
@@ -60,7 +70,12 @@ export const detectPixKeyType = (value: string): 'cpf' | 'phone' | 'email' | 'ra
     return 'email';
   }
   
-  // Check phone (10 or 11 digits) - priorize phone for 11 digits starting with common DDDs
+  // Check CNPJ (exactly 14 digits)
+  if (digits.length === 14) {
+    return 'cnpj';
+  }
+  
+  // Check phone (10 or 11 digits)
   if (digits.length === 10) {
     return 'phone';
   }
@@ -72,11 +87,11 @@ export const detectPixKeyType = (value: string): 'cpf' | 'phone' | 'email' | 'ra
     if (ddd >= 11 && ddd <= 99 && thirdDigit === '9') {
       return 'phone';
     }
-    // Otherwise, treat as CPF
+    // Otherwise, treat as CPF (exactly 11 digits)
     return 'cpf';
   }
   
-  // Default to random
+  // Default to random for any other length
   return 'random';
 };
 
@@ -89,6 +104,8 @@ export const formatPixKeyInput = (value: string): string => {
   switch (type) {
     case 'cpf':
       return formatCPFInput(value);
+    case 'cnpj':
+      return formatCNPJInput(value);
     case 'phone':
       return formatPhoneInput(value);
     case 'email':
@@ -106,7 +123,7 @@ export const formatPixKeyInput = (value: string): string => {
 export const getRawPixKey = (formatted: string): string => {
   const type = detectPixKeyType(formatted);
   
-  if (type === 'cpf' || type === 'phone') {
+  if (type === 'cpf' || type === 'cnpj' || type === 'phone') {
     return onlyDigits(formatted);
   }
   

@@ -3,10 +3,10 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding database with example employees (12 entries: 3 of each type)...');
-  // Generate 12 randomized employees with exactly 3 per pixKey type (email, phone, cpf, random)
-  const firstNames = ['Ana', 'Bruno', 'Carla', 'Diego', 'Eva', 'Felipe', 'Gabriela', 'Hugo', 'Inês', 'João', 'Lucas', 'Mariana'];
-  const lastNames = ['Silva', 'Costa', 'Mendes', 'Rocha', 'Pereira', 'Sousa', 'Almeida', 'Barbosa', 'Lima', 'Gomes', 'Nogueira', 'Ribeiro'];
+  console.log('Seeding database with example employees (20 entries: 4 of each type)...');
+  // Generate 20 randomized employees with exactly 4 per pixKey type (email, phone, cpf, cnpj, random)
+  const firstNames = ['Ana', 'Bruno', 'Carla', 'Diego', 'Eva', 'Felipe', 'Gabriela', 'Hugo', 'Inês', 'João', 'Lucas', 'Mariana', 'Pedro', 'Rita', 'Sofia', 'Tiago', 'Vera', 'Wagner', 'Yasmin', 'Zeca'];
+  const lastNames = ['Silva', 'Costa', 'Mendes', 'Rocha', 'Pereira', 'Sousa', 'Almeida', 'Barbosa', 'Lima', 'Gomes', 'Nogueira', 'Ribeiro', 'Cardoso', 'Martins', 'Ferreira', 'Oliveira', 'Santana', 'Araujo', 'Dias', 'Castro'];
 
   const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -40,18 +40,35 @@ async function main() {
     return nums.join('') + String(d1) + String(d2);
   };
 
+  const genCNPJ = () => {
+    // generate base 12 digits and compute verification digits
+    const nums = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));
+    const calcDigit = (arr: number[], weights: number[]) => {
+      let sum = 0;
+      for (let i = 0; i < arr.length; i++) sum += arr[i] * weights[i];
+      const r = sum % 11;
+      return r < 2 ? 0 : 11 - r;
+    };
+    const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const d1 = calcDigit(nums, weights1);
+    const d2 = calcDigit([...nums, d1], weights2);
+    return nums.join('') + String(d1) + String(d2);
+  };
+
   const genRandomKey = () => {
     // a short random hex/key string
     return Array.from({ length: 32 }).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
   };
 
-  // Build employees with exactly 3 of each type
+  // Build employees with exactly 4 of each type
   const employees: Array<{ name: string; pixKey: string; wallet: string; network: string } > = [];
-  const types: Array<'email' | 'phone' | 'cpf' | 'random'> = [
-    'email','email','email',
-    'phone','phone','phone',
-    'cpf','cpf','cpf',
-    'random','random','random'
+  const types: Array<'email' | 'phone' | 'cpf' | 'cnpj' | 'random'> = [
+    'email','email','email','email',
+    'phone','phone','phone','phone',
+    'cpf','cpf','cpf','cpf',
+    'cnpj','cnpj','cnpj','cnpj',
+    'random','random','random','random',
   ];
 
   for (let i = 0; i < types.length; i++) {
@@ -62,6 +79,7 @@ async function main() {
       case 'email': pixKey = genEmail(name); break;
       case 'phone': pixKey = genPhone(); break;
       case 'cpf': pixKey = genCPF(); break;
+      case 'cnpj': pixKey = genCNPJ(); break;
       case 'random': pixKey = genRandomKey(); break;
     }
     employees.push({ name, pixKey, wallet, network: ['sepolia','ethereum','polygon','arbitrum','bnb','base'][i % 6] });

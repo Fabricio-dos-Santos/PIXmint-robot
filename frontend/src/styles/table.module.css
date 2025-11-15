@@ -9,6 +9,7 @@
   margin: 0 auto;
   font-size: 12px;
   overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .cell {

@@ -1,6 +1,6 @@
 import React from 'react';
 import CopyButton from './CopyButton';
-import { isWallet, maskWallet, isEmail, maskEmail, isCPF, maskCPFDisplay, maskPhone, maskRandom } from '../lib/pixKeyUtils';
+import { isWallet, maskWallet, isEmail, maskEmail, isCPF, maskCPFDisplay, isCNPJ, maskCNPJDisplay, maskPhone, maskRandom } from '../lib/pixKeyUtils';
 
 const onlyDigits = (s = '') => s.replace(/\D/g, '');
 
@@ -12,10 +12,6 @@ const isPhone = (val?: string) => {
   return false;
 };
 
-// use isCPF from shared utils
-
-// use maskEmail / isEmail, maskPhone, maskRandom, isCPF from shared utils
-
 type Props = { value?: string; showLabel?: boolean };
 
 export default function PixKey({ value, showLabel = true }: Props) {
@@ -25,6 +21,7 @@ export default function PixKey({ value, showLabel = true }: Props) {
     if (isEmail(value)) return { label: 'email', color: '#2b6cb0', text: maskEmail(value) };
     if (isPhone(value)) return { label: 'telefone', color: '#2f855a', text: maskPhone(value) };
     if (isCPF(value)) return { label: 'CPF', color: '#b58900', text: maskCPFDisplay(value) };
+    if (isCNPJ(value)) return { label: 'CNPJ', color: '#d97706', text: maskCNPJDisplay(value) };
     if (isWallet(value)) return { label: 'wallet', color: '#7c3aed', text: maskWallet(value) };
     return { label: 'random', color: '#9b2c2c', text: maskRandom(value) };
   };
